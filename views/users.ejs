@@ -135,7 +135,7 @@
   <script>
     var $datatableUsers = $('#datatable-users').DataTable({
       "ajax": "/api/users",
-      "deferred": true,
+      "deferRender": true,
       "columns": [
         {data:"_id"},
         {data:"role"},
