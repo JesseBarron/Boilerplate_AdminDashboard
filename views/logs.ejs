@@ -85,7 +85,7 @@
     <script>
         var $datatableUsers = $('#datatable-logs').DataTable({
             "ajax": "/api/logs",
-            "deferred": true,
+            "deferRender": true,
             "columns": [
                 {data:"activity"},
                 {data:"content"},
