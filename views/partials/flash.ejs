@@ -1,0 +1,38 @@
+<% if (successMessages && successMessages.length) { %>
+    <% for(var i = 0; i < successMessages.length; i++) { %>
+        <div style="z-index:999;position:fixed;top:<%= 75 + (parseInt(`${i}0`)*6) %>px;right:0px;width:350px;" class="alert alert-success flashSuccess">
+            <span>
+            <%= successMessages[i] %>
+            </span>
+        </div>
+    <% } %>
+<% } %>
+<% if (errorMessages && errorMessages.length) { %>
+    <% for(var i = 0; i < errorMessages.length; i++) { %>
+        <div style="z-index:999;position:absolute;right:0px;top:<%= 75 + (parseInt(`${i}0`)*6) %>px" class="alert alert-danger flashError">
+            <span>
+                <%= errorMessages[i] %>
+            </span>
+        </div>
+    <% } %>
+<% } %>
+
+
+
+<script type="text/javascript">
+    window.addEventListener('load', function(){
+        setTimeout(function(){
+            jQuery('.flashSuccess').hide(500);
+            setTimeout(function(){
+                jQuery('.flashSuccess').remove();
+            },3000)
+        }, 2500);
+        setTimeout(function(){
+            jQuery('.flashError').hide(500);
+            setTimeout(function(){
+                jQuery('.flashError').remove();
+            },3000)
+        }, 2500);
+    })
+</script>
+    
