@@ -82,7 +82,12 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.locals.COMPANY = "SlotDawg";
 app.locals.COMPANY_ABV = "SD";
 
-// require('./dbUpdate');
+// ========================================================
+// ===================== SEEDING ==========================
+// *** uncomment in order to seed database with some test admin accounts
+// require('./seed/admin');
+// ===================== SEEDING ==========================
+// ========================================================
 
 //Store the user in "locals" in order to access in the view
 app.use((req,res,next)=>{
