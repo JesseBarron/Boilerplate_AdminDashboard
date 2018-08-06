@@ -2,7 +2,7 @@ var express = require('express');
 var router = express.Router();
 var authCheck = require('./authcheck');
 
-/* GET home page. */
+/* GET logs page. */
 router.get('/', authCheck, (req, res, next) => {
     res.render(
         'logs',
