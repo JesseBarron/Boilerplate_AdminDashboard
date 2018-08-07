@@ -79,13 +79,14 @@ app.use(express.static(path.join(__dirname, 'public')));
 /*
   Globals accessible in all views
 */
-app.locals.COMPANY = "SlotDawg";
-app.locals.COMPANY_ABV = "SD";
+app.locals.COMPANY = "Cold Beers";
+app.locals.COMPANY_ABV = "CBCB";
 
 // ========================================================
 // ===================== SEEDING ==========================
 // *** uncomment in order to seed database with some test admin accounts
 // require('./seed/admin');
+// require('./seed/test');
 // ===================== SEEDING ==========================
 // ========================================================
 
@@ -94,6 +95,8 @@ app.use((req,res,next)=>{
 	if (req.user) {
 		res.locals.user = req.user;
 	}
+	// res.locals.successMessages = req.flash('successMessages');
+	// res.locals.errorMessages = req.flash('errorMessages');
 	next();
 });
 

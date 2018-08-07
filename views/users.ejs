@@ -170,7 +170,8 @@
             $datatableUsers.ajax.reload();
           },
           error: function(response){
-            feedbackPopup(response.error,'danger');
+            var message = response.statusText+':'+response.status;
+            feedbackPopup(message,'danger');
           }
         })
       }
