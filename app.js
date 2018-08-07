@@ -29,7 +29,6 @@ app.use(express_session({
 var passport = require('passport');
 require('./config/passport')(passport);
 
-
 var fileUpload = require("express-fileupload");
 app.use(fileUpload());
 var bodyParser = require('body-parser');
@@ -95,10 +94,12 @@ app.use((req,res,next)=>{
 	if (req.user) {
 		res.locals.user = req.user;
 	}
-	// res.locals.successMessages = req.flash('successMessages');
-	// res.locals.errorMessages = req.flash('errorMessages');
 	next();
 });
+
+const authCheck = require('./routes/authcheck');
+const statusMonitor = require('express-status-monitor')();
+app.get('/status', authCheck, statusMonitor.pageRoute);
 
 // ========================================================
 // ====================== Routers =========================
