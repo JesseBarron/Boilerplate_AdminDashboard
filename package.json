@@ -17,6 +17,7 @@
     "express": "~4.16.0",
     "express-fileupload": "^0.4.0",
     "express-session": "^1.15.6",
+    "express-status-monitor": "^1.1.5",
     "glob": "^7.1.2",
     "http-errors": "~1.6.2",
     "moment": "^2.22.2",

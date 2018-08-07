@@ -58,7 +58,6 @@ router.post('/', authCheck, async (req, res) => {
 		
 	}
 	catch (error) {
-		console.log('failed to create user because:',error);
 		common.LogError("Create User",error,req.user._id,req.ip);
 
 		req.flash('errorMessages',"There was an problem processing that request. If this problem persists, please contact support");
