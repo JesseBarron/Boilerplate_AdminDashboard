@@ -2,12 +2,18 @@ var ActivityLog = require('../../config/models/ActivityLog').ActivityLog;
 var express = require('express');
 var router = express.Router();
 var authCheck = require('../authcheck');
+var moment = require('moment');
+var common = require('../../config/common');
 
 /* GET all logs */
 router.get('/', authCheck, async (req, res) => {
 
 	try {
-		let logs = await ActivityLog.find();
+		let logs = await ActivityLog.find().toArray();
+		console.log(typeof logs);
+		logs.forEach((e,i)=>{
+			logs[i].date = moment(logs[i].date).format('YYYY');
+		});
 		return res.json({success:true,data:logs});
 	}
 	catch (error) {

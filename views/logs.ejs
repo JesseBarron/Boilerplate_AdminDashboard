@@ -55,14 +55,14 @@
                                             <tr>
                                                 <th class="sorting_asc" tabindex="0" aria-controls="datatable" rowspan="1" colspan="1" aria-sort="ascending" aria-label="Name: activate to sort column descending"
                                                     style="width: 100%;">Activity</th>
-                                                <th class="sorting_asc" tabindex="0" aria-controls="datatable" rowspan="1" colspan="1" aria-sort="ascending" aria-label="Name: activate to sort column descending"
+                                                <th class="sorting" tabindex="1" aria-controls="datatable" rowspan="1" colspan="1" aria-sort="ascending" aria-label="Name: activate to sort column descending"
                                                     style="width: 100%;">Content</th>
-                                                <th class="sorting_asc" tabindex="0" aria-controls="datatable" rowspan="1" colspan="1" aria-sort="ascending" aria-label="Name: activate to sort column descending"
+                                                <th class="sorting" tabindex="2" aria-controls="datatable" rowspan="1" colspan="1" aria-sort="ascending" aria-label="Name: activate to sort column descending"
                                                     style="width: 100%;">User</th>
-                                                <th class="sorting_asc" tabindex="0" aria-controls="datatable" rowspan="1" colspan="1" aria-sort="ascending" aria-label="Name: activate to sort column descending"
-                                                    style="width: 170px;">IP</th>
-                                                <th class="sorting_asc" tabindex="0" aria-controls="datatable" rowspan="1" colspan="1" aria-sort="ascending" aria-label="Name: activate to sort column descending"
-                                                    style="width: 170px;">Date</th>
+                                                <th class="sorting" tabindex="3" aria-controls="datatable" rowspan="1" colspan="1" aria-sort="ascending" aria-label="Name: activate to sort column descending"
+                                                    style="width: 100%;">IP</th>
+                                                <th class="sorting" tabindex="4" aria-controls="datatable" rowspan="1" colspan="1" aria-sort="ascending" aria-label="Name: activate to sort column descending"
+                                                    style="width: 100%;">Date</th>
                                             </tr>
                                         </thead>
                                     </table>
@@ -85,18 +85,21 @@
     <script>
         var $datatableUsers = $('#datatable-logs').DataTable({
             "ajax": "/api/logs",
-            "deferred": true,
+            // "processing": true,
+            // "serverSide": true,
+            "deferRender": true,
             "columns": [
                 {data:"activity"},
                 {data:"content"},
                 {data:"user"},
                 {data:"ip"},
-                {
-                    data:"date",
-                    render: function(date,x,row) {
-                        return moment(date).format('LLL');
-                    }
-                }
+                {data:"date"}
+                // {
+                //     data:"date",
+                //     render: function(date,x,row) {
+                //         return moment(date).format('LLL');
+                //     }
+                // }
             ],
             "dataSrc": 'data',
             "scrollX": true

@@ -1,6 +1,7 @@
 var express = require('express');
 var router = express.Router();
 var authCheck = require('./authcheck');
+var common = require('../config/common');
 
 /* GET users listing. */
 router.get('/', authCheck, (req, res, next) => {

@@ -21,4 +21,6 @@ var feedbackPopup = function(message,type){
             $popup.remove();
         },500);
     },readingTime(message).time);
+    console.log('message:',message);
+    console.log('readTime:',readingTime(message).time);
 }

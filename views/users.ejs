@@ -135,7 +135,7 @@
   <script>
     var $datatableUsers = $('#datatable-users').DataTable({
       "ajax": "/api/users",
-      "deferred": true,
+      "deferRender": true,
       "columns": [
         {data:"_id"},
         {data:"role"},
@@ -170,7 +170,8 @@
             $datatableUsers.ajax.reload();
           },
           error: function(response){
-            feedbackPopup(response.error,'danger');
+            var message = response.statusText+':'+response.status;
+            feedbackPopup(message,'danger');
           }
         })
       }
