@@ -78,8 +78,8 @@ app.use(express.static(path.join(__dirname, 'public')));
 /*
   Globals accessible in all views
 */
-app.locals.COMPANY = "Cold Beers";
-app.locals.COMPANY_ABV = "CBCB";
+app.locals.COMPANY = process.env.COMPANY;
+app.locals.COMPANY_ABV = process.env.COMPANY_ABV;
 
 // ========================================================
 // ===================== SEEDING ==========================

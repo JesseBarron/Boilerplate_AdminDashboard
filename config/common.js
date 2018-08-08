@@ -10,7 +10,7 @@ const nodemailer = require('nodemailer');
  * @param {Object} emailArgs Object contains the following: "to", "subject", "html"
  * @param {function} callback The function the run after sending the email
  */
-exports.SendEmail = (emailArgs, callback) => {
+exports.SendEmail = async (emailArgs) => {
     var transport = nodemailer.createTransport({
         service: process.env.EMAIL_SERVICE,
         auth: {
@@ -19,13 +19,23 @@ exports.SendEmail = (emailArgs, callback) => {
         }
     });
 
+    try {
+        let promises = [
+            transport.sendMail(emailArgs),
+            LogEmail(emailArgs.to,emailArgs.subject,emailArgs.html)
+        ];
+        await Promise.all(promises);
+    }
+    catch (error) {
+        throw new Error(error);
+    }
+
     transport.sendMail(emailArgs, (error, info) => {
         if (error) {
             exports.LogError("Email",error,null,null);
             callback(error);
         }
         else {
-            exports.LogEmail(emailArgs.to,emailArgs.subject,emailArgs.html);
             callback(null);
         }
     })
@@ -49,6 +59,29 @@ exports.SendEmail = (emailArgs, callback) => {
 // ============================ EMAIL EXAMPLE ============================|
 // =======================================================================|
 
+/**
+ * Logs an email in the database for later reference
+ * 
+ * @param {string} subject The subject line of the email that was sent
+ * @param {string} content The body/content of the email that was sent
+ * @param {ObjectId} userId The id of the user that was referenced in for the email
+ */
+const LogEmail = async (to, subject, content) => {
+
+    try {
+        let _emailLog = new EmailLog();
+        _emailLog.date = new Date();
+        _emailLog.to = to;
+        _emailLog.subject = subject;
+        _emailLog.content = content;
+        let emailLog = await _emailLog.save();
+        return emailLog;
+    }
+    catch (error) {
+        throw new Error(error);
+    }
+
+}
 
 
 /**
@@ -99,31 +132,6 @@ exports.LogActivity = async (activity, content, userId, ip) => {
         _activityLog.ip = ip;
         let activityLog = await _activityLog.save();
         return activityLog;
-    }
-    catch (error) {
-        throw new Error(error);
-    }
-
-}
-
-
-/**
- * Logs an email in the database for later reference
- * 
- * @param {string} subject The subject line of the email that was sent
- * @param {string} content The body/content of the email that was sent
- * @param {ObjectId} userId The id of the user that was referenced in for the email
- */
-exports.LogEmail = async (to, subject, content) => {
-
-    try {
-        let _emailLog = new EmailLog();
-        _emailLog.date = new Date();
-        _emailLog.to = to;
-        _emailLog.subject = subject;
-        _emailLog.content = content;
-        let emailLog = await _emailLog.save();
-        return emailLog;
     }
     catch (error) {
         throw new Error(error);
