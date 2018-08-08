@@ -49,7 +49,14 @@ router.post('/', authCheck, async (req, res) => {
 
 		let activityContent = "User by id "+req.user._id+" created a new user by id "+user._id;
 		common.LogActivity("Create User",activityContent,req.user._id,req.ip);
-
+		
+		let email = {
+			to: user.email,
+			subject: process.env.COMPANY+" | New User",
+			html: "Welcome to "+process.env.COMPANY
+		}
+		common.SendEmail(email);
+		
 		req.flash('successMessages','Successfully create the new user!');
 		return res.redirect('/users');
 		
