@@ -1,5 +1,6 @@
 const ActivityLog = require('./models/ActivityLog').ActivityLog;
 const ErrorLog = require('./models/ErrorLog').ErrorLog;
+const EmailLog = require('./models/EmailLog').EmailLog;
 const nodemailer = require('nodemailer');
 
 
@@ -24,6 +25,7 @@ exports.SendEmail = function (emailArgs, callback) {
             callback(error);
         }
         else {
+            exports.LogEmail(emailArgs.to,emailArgs.subject,emailArgs.html);
             callback(null);
         }
     })
@@ -102,6 +104,35 @@ exports.LogActivity = (activity, content, userId, ip) => {
             _activityLog.user = userId;
             _activityLog.ip = ip;
             await _activityLog.save();
+            resolve();
+        }
+        catch (error) {
+            reject(error);
+        }
+
+    });
+
+}
+
+
+/**
+ * Logs an email in the database for later reference
+ * 
+ * @param {string} subject The subject line of the email that was sent
+ * @param {string} content The body/content of the email that was sent
+ * @param {ObjectId} userId The id of the user that was referenced in for the email
+ */
+exports.LogEmail = (to, subject, content) => {
+
+    return new Promise(async (resolve, reject) => {
+
+        try {
+            let _emailLog = new EmailLog();
+            _emailLog.date = new Date();
+            _emailLog.to = to;
+            _emailLog.subject = subject;
+            _emailLog.content = content;
+            await _emailLog.save();
             resolve();
         }
         catch (error) {
