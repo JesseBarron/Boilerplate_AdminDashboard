@@ -10,7 +10,7 @@ const nodemailer = require('nodemailer');
  * @param {Object} emailArgs Object contains the following: "to", "subject", "html"
  * @param {function} callback The function the run after sending the email
  */
-exports.SendEmail = function (emailArgs, callback) {
+exports.SendEmail = (emailArgs, callback) => {
     var transport = nodemailer.createTransport({
         service: process.env.EMAIL_SERVICE,
         auth: {
@@ -60,25 +60,21 @@ exports.SendEmail = function (emailArgs, callback) {
  * @param {ObjectId} userId The id of the user that the error occurred for
  * @param {string} ip The ip address of the user that the error occured for
  */
-exports.LogError = (category, error, userId, ip) => {
+exports.LogError = async (category, error, userId, ip) => {
 
-    return new Promise(async (resolve, reject) => {
-
-        try {
-            let _errorLog = new ErrorLog();
-            _errorLog.date = new Date();
-            _errorLog.category = category;
-            _errorLog.error = error;
-            _errorLog.user = userId;
-            _errorLog.ip = ip;
-            await _errorLog.save();
-            resolve();
-        }
-        catch (error) {
-            reject(error);
-        }
-
-    });
+    try {
+        let _errorLog = new ErrorLog();
+        _errorLog.date = new Date();
+        _errorLog.category = category;
+        _errorLog.error = error;
+        _errorLog.user = userId;
+        _errorLog.ip = ip;
+        let errorLog = await _errorLog.save();
+        return errorLog;
+    }
+    catch (error) {
+        throw new Error(error);
+    }
 
 }
 
@@ -92,25 +88,21 @@ exports.LogError = (category, error, userId, ip) => {
  * @param {ObjectId} userId The users objectId that has performed the activity
  * @param {string} ip The ip address of the user. Accessed through req.ip
  */
-exports.LogActivity = (activity, content, userId, ip) => {
+exports.LogActivity = async (activity, content, userId, ip) => {
 
-    return new Promise(async (resolve, reject) => {
-
-        try {
-            let _activityLog = new ActivityLog();
-            _activityLog.date = new Date();
-            _activityLog.activity = activity;
-            _activityLog.content = content;
-            _activityLog.user = userId;
-            _activityLog.ip = ip;
-            await _activityLog.save();
-            resolve();
-        }
-        catch (error) {
-            reject(error);
-        }
-
-    });
+    try {
+        let _activityLog = new ActivityLog();
+        _activityLog.date = new Date();
+        _activityLog.activity = activity;
+        _activityLog.content = content;
+        _activityLog.user = userId;
+        _activityLog.ip = ip;
+        let activityLog = await _activityLog.save();
+        return activityLog;
+    }
+    catch (error) {
+        throw new Error(error);
+    }
 
 }
 
@@ -122,23 +114,19 @@ exports.LogActivity = (activity, content, userId, ip) => {
  * @param {string} content The body/content of the email that was sent
  * @param {ObjectId} userId The id of the user that was referenced in for the email
  */
-exports.LogEmail = (to, subject, content) => {
+exports.LogEmail = async (to, subject, content) => {
 
-    return new Promise(async (resolve, reject) => {
-
-        try {
-            let _emailLog = new EmailLog();
-            _emailLog.date = new Date();
-            _emailLog.to = to;
-            _emailLog.subject = subject;
-            _emailLog.content = content;
-            await _emailLog.save();
-            resolve();
-        }
-        catch (error) {
-            reject(error);
-        }
-
-    });
+    try {
+        let _emailLog = new EmailLog();
+        _emailLog.date = new Date();
+        _emailLog.to = to;
+        _emailLog.subject = subject;
+        _emailLog.content = content;
+        let emailLog = await _emailLog.save();
+        return emailLog;
+    }
+    catch (error) {
+        throw new Error(error);
+    }
 
 }
