@@ -2,7 +2,7 @@ var mongoose = require("mongoose");
 
 var ErrorLogSchema = mongoose.Schema({
 
-    date: Date,
+    created: Date,
     category: String,
     error: String,
     ip: String,

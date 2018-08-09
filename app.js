@@ -80,6 +80,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 */
 app.locals.COMPANY = process.env.COMPANY;
 app.locals.COMPANY_ABV = process.env.COMPANY_ABV;
+app.locals.COMPANY_FA_ICON = process.env.COMPANY_FA_ICON;
 
 // ========================================================
 // ===================== SEEDING ==========================
@@ -99,6 +100,7 @@ app.use((req,res,next)=>{
 
 const authCheck = require('./routes/authcheck');
 const statusMonitor = require('express-status-monitor')();
+app.use(statusMonitor);
 app.get('/status', authCheck, statusMonitor.pageRoute);
 
 // ========================================================
