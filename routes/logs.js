@@ -1,9 +1,9 @@
 var express = require('express');
 var router = express.Router();
-var authCheck = require('./authcheck');
+var adminAuth = require('./adminAuth');
 
 /* GET logs page. */
-router.get('/', authCheck, (req, res, next) => {
+router.get('/', adminAuth, (req, res, next) => {
     res.render(
         'logs',
         {

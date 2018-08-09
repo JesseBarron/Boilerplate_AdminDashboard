@@ -1,13 +1,13 @@
 var express = require('express');
 var router = express.Router();
-var authCheck = require('./authcheck');
+var adminAuth = require('./adminAuth');
 var User = require('../config/models/User').User;
 var ErrorLog = require('../config/models/ErrorLog').ErrorLog;
 var ActivityLog = require('../config/models/ActivityLog').ActivityLog;
 var moment = require('moment');
 
 /* GET home page. */
-router.get('/', authCheck, async (req, res, next) => {
+router.get('/', adminAuth, async (req, res, next) => {
 
 	let promises = [
 		User.find(),

@@ -1,13 +1,13 @@
 var express = require('express');
 var router = express.Router();
-var authCheck = require('../authcheck');
+var adminAuth = require('../adminAuth');
 var User = require('../../config/models/User').User;
 var common = require('../../config/common');
 var permission = require('permission');
 var bcrypt = require('bcrypt');
 
 /* GET all users */
-router.get('/', authCheck, async (req, res) => {
+router.get('/', adminAuth, async (req, res) => {
 
 	try {
 		let users = await User.find();
@@ -20,7 +20,7 @@ router.get('/', authCheck, async (req, res) => {
 	
 });
 
-router.post('/', authCheck, async (req, res) => {
+router.post('/', adminAuth, async (req, res) => {
 
 	if (!req.body.email || !req.body.password || !req.body.passwordConfirm || !req.body.role) {
 		return res.json({success:false,message:"Must fill in all fields to create a new user."});
@@ -76,7 +76,7 @@ router.post('/', authCheck, async (req, res) => {
 });
 
 
-router.delete('/:_id', authCheck, permission(['SuperAdmin']), async (req, res) => {
+router.delete('/:_id', adminAuth, permission(['SuperAdmin']), async (req, res) => {
 
 	try {
 		let _id = req.params._id;

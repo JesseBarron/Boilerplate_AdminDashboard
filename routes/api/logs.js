@@ -3,11 +3,11 @@ var EmailLog = require('../../config/models/EmailLog').EmailLog;
 var ErrorLog = require('../../config/models/ErrorLog').ErrorLog;
 var express = require('express');
 var router = express.Router();
-var authCheck = require('../authcheck');
+var adminAuth = require('../adminAuth');
 var common = require('../../config/common');
 
 /* GET all logs */
-router.get('/activity', authCheck, async (req, res) => {
+router.get('/activity', adminAuth, async (req, res) => {
 
 	try {
 		let logs = await ActivityLog.find();
@@ -20,7 +20,7 @@ router.get('/activity', authCheck, async (req, res) => {
 	
 });
 
-router.get('/email', authCheck, async (req, res) => {
+router.get('/email', adminAuth, async (req, res) => {
 
 	try {
 		let logs = await EmailLog.find();
@@ -33,7 +33,7 @@ router.get('/email', authCheck, async (req, res) => {
 	
 });
 
-router.get('/error', authCheck, async (req, res) => {
+router.get('/error', adminAuth, async (req, res) => {
 
 	try {
 		let logs = await ErrorLog.find();

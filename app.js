@@ -98,10 +98,10 @@ app.use((req,res,next)=>{
 	next();
 });
 
-const authCheck = require('./routes/authcheck');
+const adminAuth = require('./routes/adminAuth');
 const statusMonitor = require('express-status-monitor')();
 app.use(statusMonitor);
-app.get('/status', authCheck, statusMonitor.pageRoute);
+app.get('/status', adminAuth, statusMonitor.pageRoute);
 
 // ========================================================
 // ====================== Routers =========================
