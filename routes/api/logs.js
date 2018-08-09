@@ -14,7 +14,7 @@ router.get('/activity', adminAuth, async (req, res) => {
 		return res.json({success:true,data:logs});
 	}
 	catch (error) {
-		common.LogError('API GET /logs/activity',error,req.user._id,req.ip);
+		common.LogError('500 API GET /logs/activity',error,req.user._id,req.ip);
 		return res.json({success:false,message:"There was a problem processing that request. If the problem persists, please contact support."});
 	}
 	
@@ -27,7 +27,7 @@ router.get('/email', adminAuth, async (req, res) => {
 		return res.json({success:true,data:logs});
 	}
 	catch (error) {
-		common.LogError('API GET /logs/email',error,req.user._id,req.ip);
+		common.LogError('500 API GET /logs/email',error,req.user._id,req.ip);
 		return res.json({success:false,message:"There was a problem processing that request. If the problem persists, please contact support."});
 	}
 	
@@ -40,7 +40,7 @@ router.get('/error', adminAuth, async (req, res) => {
 		return res.json({success:true,data:logs});
 	}
 	catch (error) {
-		common.LogError('API GET /logs/error',error,req.user._id,req.ip);
+		common.LogError('500 API GET /logs/error',error,req.user._id,req.ip);
 		return res.json({success:false,message:"There was a problem processing that request. If the problem persists, please contact support."});
 	}
 	
