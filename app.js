@@ -99,6 +99,7 @@ app.use((req,res,next)=>{
 
 const authCheck = require('./routes/authcheck');
 const statusMonitor = require('express-status-monitor')();
+app.use(statusMonitor);
 app.get('/status', authCheck, statusMonitor.pageRoute);
 
 // ========================================================
