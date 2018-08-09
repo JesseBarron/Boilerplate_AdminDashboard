@@ -11,10 +11,11 @@ var moment = require('moment');
 router.get('/', adminAuth, async (req, res) => {
 
 	try {
+		let createdDateRange = {created:{'$lte':new Date(),'$gte':moment().subtract(2,'weeks')}};
 		let promises = [
 			User.find(),
-			ErrorLog.find(),
-			ActivityLog.find()
+			ErrorLog.find(createdDateRange),
+			ActivityLog.find(createdDateRange)
 		]
 		let [allUsers, allErrors, allActivities] = await Promise.all(promises);
 	
