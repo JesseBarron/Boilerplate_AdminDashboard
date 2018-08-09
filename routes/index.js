@@ -4,41 +4,49 @@ var adminAuth = require('./adminAuth');
 var User = require('../config/models/User').User;
 var ErrorLog = require('../config/models/ErrorLog').ErrorLog;
 var ActivityLog = require('../config/models/ActivityLog').ActivityLog;
+var common = require('../config/common');
 var moment = require('moment');
 
 /* GET home page. */
-router.get('/', adminAuth, async (req, res, next) => {
+router.get('/', adminAuth, async (req, res) => {
 
-	let promises = [
-		User.find(),
-		ErrorLog.find(),
-		ActivityLog.find()
-	]
-	let [allUsers, allErrors, allActivities] = await Promise.all(promises);
-
-	let [thisWeeksRegistrations, weeklyRegistrationIncreasePercent] = weekTotalAndPercentIncrease(allUsers);
-
-	let [thisWeeksErrors, weeklyErrorIncreasePercent] = weekTotalAndPercentIncrease(allErrors);
-
-	let allLogins = allActivities.filter( a => a.activity == 'Login' );
-	let [thisWeeksLogins, weeklyLoginIncreasePercent] = weekTotalAndPercentIncrease(allLogins);
+	try {
+		let promises = [
+			User.find(),
+			ErrorLog.find(),
+			ActivityLog.find()
+		]
+		let [allUsers, allErrors, allActivities] = await Promise.all(promises);
 	
-	res.render(
-		'index',
-		{
-			menu: 'dashboard',
-			title: 'Dashboard',
-			successMessages: req.flash('successMessages'),
-			errorMessages: req.flash('errorMessages'),
-			totalUsers: allUsers.length,
-			thisWeeksRegistrations,
-			weeklyRegistrationIncreasePercent,
-			thisWeeksErrors,
-			weeklyErrorIncreasePercent,
-			thisWeeksLogins,
-			weeklyLoginIncreasePercent
-		}
-	);
+		let [thisWeeksRegistrations, weeklyRegistrationIncreasePercent] = weekTotalAndPercentIncrease(allUsers);
+	
+		let [thisWeeksErrors, weeklyErrorIncreasePercent] = weekTotalAndPercentIncrease(allErrors);
+	
+		let allLogins = allActivities.filter( a => a.activity == 'Login' );
+		let [thisWeeksLogins, weeklyLoginIncreasePercent] = weekTotalAndPercentIncrease(allLogins);
+		
+		return res.render(
+			'index',
+			{
+				menu: 'dashboard',
+				title: 'Dashboard',
+				successMessages: req.flash('successMessages'),
+				errorMessages: req.flash('errorMessages'),
+				totalUsers: allUsers.length,
+				thisWeeksRegistrations,
+				weeklyRegistrationIncreasePercent,
+				thisWeeksErrors,
+				weeklyErrorIncreasePercent,
+				thisWeeksLogins,
+				weeklyLoginIncreasePercent
+			}
+		);
+	}
+	catch (error) {
+		common.LogError("500 GET /", error, req.user._id, req.ip);
+		return res.render('error500');
+	}
+	
 });
 
 /**
