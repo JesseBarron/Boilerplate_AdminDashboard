@@ -80,6 +80,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 */
 app.locals.COMPANY = process.env.COMPANY;
 app.locals.COMPANY_ABV = process.env.COMPANY_ABV;
+app.locals.COMPANY_FA_ICON = process.env.COMPANY_FA_ICON;
 
 // ========================================================
 // ===================== SEEDING ==========================

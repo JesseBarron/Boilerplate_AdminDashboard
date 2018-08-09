@@ -2,7 +2,7 @@ var mongoose = require("mongoose");
 
 var EmailLogSchema = mongoose.Schema({
 
-    date: Date,
+    created: Date,
     to: String,
     subject: String,
     content: String

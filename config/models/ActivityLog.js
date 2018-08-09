@@ -2,7 +2,7 @@ var mongoose = require("mongoose");
 
 var ActivityLogSchema = mongoose.Schema({
 
-    date: Date,
+    created: Date,
     activity: String,
     content: String,
     ip: String,

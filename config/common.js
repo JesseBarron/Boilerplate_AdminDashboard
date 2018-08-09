@@ -29,16 +29,6 @@ exports.SendEmail = async (emailArgs) => {
     catch (error) {
         throw new Error(error);
     }
-
-    transport.sendMail(emailArgs, (error, info) => {
-        if (error) {
-            exports.LogError("Email",error,null,null);
-            callback(error);
-        }
-        else {
-            callback(null);
-        }
-    })
 }
 // =======================================================================|
 // ============================ EMAIL EXAMPLE ============================|
@@ -70,7 +60,7 @@ const LogEmail = async (to, subject, content) => {
 
     try {
         let _emailLog = new EmailLog();
-        _emailLog.date = new Date();
+        _emailLog.created = new Date();
         _emailLog.to = to;
         _emailLog.subject = subject;
         _emailLog.content = content;
@@ -97,7 +87,7 @@ exports.LogError = async (category, error, userId, ip) => {
 
     try {
         let _errorLog = new ErrorLog();
-        _errorLog.date = new Date();
+        _errorLog.created = new Date();
         _errorLog.category = category;
         _errorLog.error = error;
         _errorLog.user = userId;
@@ -125,7 +115,7 @@ exports.LogActivity = async (activity, content, userId, ip) => {
 
     try {
         let _activityLog = new ActivityLog();
-        _activityLog.date = new Date();
+        _activityLog.created = new Date();
         _activityLog.activity = activity;
         _activityLog.content = content;
         _activityLog.user = userId;
