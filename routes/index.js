@@ -57,7 +57,7 @@ router.get('/', adminAuth, async (req, res) => {
  */
 function percentIncrease(newNumber, originalNumber){
 	let increase = newNumber - originalNumber;
-	return ((increase+originalNumber)*100);
+	return ((increase/originalNumber)*100);
 }
 
 /**
