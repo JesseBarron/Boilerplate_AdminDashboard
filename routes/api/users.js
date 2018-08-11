@@ -1,10 +1,10 @@
-var express = require('express');
-var router = express.Router();
-var adminAuth = require('../adminAuth');
-var User = require('../../config/models/User').User;
-var common = require('../../config/common');
-var permission = require('permission');
-var bcrypt = require('bcrypt');
+const express = require('express');
+const router = express.Router();
+const adminAuth = require('../adminAuth');
+const User = require('../../config/models/User').User;
+const common = require('../../config/common');
+const permission = require('permission');
+const bcrypt = require('bcrypt');
 
 /* GET all users */
 router.get('/', adminAuth, async (req, res) => {

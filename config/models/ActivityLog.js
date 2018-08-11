@@ -7,7 +7,7 @@ var ActivityLogSchema = mongoose.Schema({
     content: String,
     ip: String,
     user: {type: mongoose.Schema.Types.ObjectId, ref: 'User'}
-        
+
 });
 
 var ActivityLog = mongoose.model('ActivityLog', ActivityLogSchema);

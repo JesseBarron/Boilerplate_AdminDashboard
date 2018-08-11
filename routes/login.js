@@ -1,7 +1,6 @@
-var express = require('express');
-var router = express.Router();
-var passport = require('passport');
-var common = require('../config/common');
+const express = require('express');
+const router = express.Router();
+const passport = require('passport');
 
 router.get('/', (req, res) => {
     return res.render(

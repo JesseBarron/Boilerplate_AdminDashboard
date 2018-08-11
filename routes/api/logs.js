@@ -1,17 +1,17 @@
-var ActivityLog = require('../../config/models/ActivityLog').ActivityLog;
-var EmailLog = require('../../config/models/EmailLog').EmailLog;
-var ErrorLog = require('../../config/models/ErrorLog').ErrorLog;
-var express = require('express');
-var router = express.Router();
-var adminAuth = require('../adminAuth');
-var common = require('../../config/common');
-var moment = require('moment');
+const ActivityLog = require('../../config/models/ActivityLog').ActivityLog;
+const EmailLog = require('../../config/models/EmailLog').EmailLog;
+const ErrorLog = require('../../config/models/ErrorLog').ErrorLog;
+const express = require('express');
+const router = express.Router();
+const adminAuth = require('../adminAuth');
+const common = require('../../config/common');
+const moment = require('moment');
 
 /* GET all logs */
 router.get('/activity', adminAuth, async (req, res) => {
-
+	
 	try {
-		let logs = await ActivityLog.find();
+		let logs = await ActivityLog.find({type:req.body.type});
 		return res.json({success:true,data:logs});
 	}
 	catch (error) {
@@ -27,14 +27,14 @@ router.post('/activity/filter', adminAuth, async (req, res) => {
 		let minDate = req.body.minDate;
 		let maxDate = req.body.maxDate;
 		let filterDateRange = {created:{'$lte':moment(maxDate),'$gte':moment(minDate)}};
-		console.log('filter:',filterDateRange);
 		let activities = await ActivityLog.find(filterDateRange);
 
 		let dateTotals = activities.reduce((acc,curr,index)=>{
 			let dateCreated = moment(curr.created).format('YYYY-MM-DD');
 			if (acc[dateCreated]) {
 				acc[dateCreated] += 1;
-			} else {
+			}
+			else {
 				acc[dateCreated] = 1;
 			}
 			return acc;
@@ -44,20 +44,20 @@ router.post('/activity/filter', adminAuth, async (req, res) => {
 			start = moment(minDate).format('YYYY-MM-DD'),
 			end = moment(maxDate).format('YYYY-MM-DD');
 
-		console.log('dates:',dates);
-		console.log('start:',start);
-		console.log('end:',end);
+		// console.log('dates:',dates);
+		// console.log('start:',start);
+		// console.log('end:',end);
 
 		let nextDay = moment(start).format('YYYY-MM-DD');
 
 		while(nextDay <= end) {
-			console.log('Checking if',nextDay,'exists');
+			// console.log('Checking if',nextDay,'exists');
 			if(!dateTotals[nextDay]){
-				console.log('that day does not exist!');
+				// console.log('that day does not exist!');
 				dateTotals[nextDay] = 0;
 			}
 			else {
-				console.log('Yup.. that day exists!');
+				// console.log('Yup.. that day exists!');
 			}
 			nextDay = moment(nextDay).add(1,'days').format('YYYY-MM-DD');
 		}

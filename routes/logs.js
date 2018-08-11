@@ -1,6 +1,6 @@
-var express = require('express');
-var router = express.Router();
-var adminAuth = require('./adminAuth');
+const express = require('express');
+const router = express.Router();
+const adminAuth = require('./adminAuth');
 
 /* GET logs page. */
 router.get('/', adminAuth, (req, res, next) => {
