@@ -51,7 +51,7 @@
                                         <thead>
                                             <tr>
                                                 <th class="sorting_asc" tabindex="0" aria-controls="datatable" rowspan="1" colspan="1" aria-sort="ascending" aria-label="Name: activate to sort column descending"
-                                                    style="width: 100%;">Activity</th>
+                                                    style="width: auto;">Activity</th>
                                                 <th class="sorting" tabindex="1" aria-controls="datatable" rowspan="1" colspan="1" aria-sort="ascending" aria-label="Name: activate to sort column descending"
                                                     style="width: 100%;">Content</th>
                                                 <th class="sorting" tabindex="2" aria-controls="datatable" rowspan="1" colspan="1" aria-sort="ascending" aria-label="Name: activate to sort column descending"
@@ -188,13 +188,13 @@
                 {data:"content"},
                 {data:"user"},
                 {data:"ip"},
-                {data:"created"}
-                // {
-                //     data:"date",
-                //     render: function(date,x,row) {
-                //         return moment(date).format('LLL');
-                //     }
-                // }
+                // {data:"created"}
+                {
+                    data:"created",
+                    render: function(date,x,row) {
+                        return moment(date).format('LLL');
+                    }
+                }
             ],
             "dataSrc": 'data',
             "scrollX": true
@@ -207,13 +207,13 @@
                 {data:"to"},
                 {data:"subject"},
                 {data:"content"},
-                {data:"created"}
-                // {
-                //     data:"date",
-                //     render: function(date,x,row) {
-                //         return moment(date).format('LLL');
-                //     }
-                // }
+                // {data:"created"}
+                {
+                    data:"created",
+                    render: function(date,x,row) {
+                        return moment(date).format('LLL');
+                    }
+                }
             ],
             "dataSrc": 'data',
             "scrollX": true
@@ -227,13 +227,13 @@
                 {data:"error"},
                 {data:"user"},
                 {data:"ip"},
-                {data:"created"}
-                // {
-                //     data:"date",
-                //     render: function(date,x,row) {
-                //         return moment(date).format('LLL');
-                //     }
-                // }
+                // {data:"created"}
+                {
+                    data:"created",
+                    render: function(date,x,row) {
+                        return moment(date).format('LLL');
+                    }
+                }
             ],
             "dataSrc": 'data',
             "scrollX": true
