@@ -1,19 +1,19 @@
-var createError = require('http-errors');
-var express = require('express');
-var path = require('path');
-var cookieParser = require('cookie-parser');
-var logger = require('morgan');
-var flash = require('connect-flash');
-var permission = require('permission');
-var app = express();
+const createError = require('http-errors');
+const express = require('express');
+const path = require('path');
+const cookieParser = require('cookie-parser');
+const logger = require('morgan');
+const flash = require('connect-flash');
+const permission = require('permission');
+const app = express();
 
 require('dotenv').config();
 require('./config/mongo');
 
-var express_session = require('express-session');
-var MongoDBStore = require('connect-mongodb-session')(express_session);
+const express_session = require('express-session');
+const MongoDBStore = require('connect-mongodb-session')(express_session);
 
-var sessionStore = new MongoDBStore({uri: `mongodb://localhost:27017/${process.env.DB_NAME}`, collection:"Admin_Sessions"});
+const sessionStore = new MongoDBStore({uri: `mongodb://localhost:27017/${process.env.DB_NAME}`, collection:"Admin_Sessions"});
 sessionStore.on("error", (error) => {
 	console.log("Session Error: " + error);
 });
@@ -26,12 +26,12 @@ app.use(express_session({
 	activeDuration: 1000 * 60 * 30	// 30 minutes in milliseconds
 }));
 
-var passport = require('passport');
+const passport = require('passport');
 require('./config/passport')(passport);
 
-var fileUpload = require("express-fileupload");
+const fileUpload = require("express-fileupload");
 app.use(fileUpload());
-var bodyParser = require('body-parser');
+const bodyParser = require('body-parser');
 app.use(bodyParser.json({limit: '50mb'}));
 app.use(bodyParser.urlencoded({
 	extended: true,
@@ -55,12 +55,12 @@ app.use(express.static(path.join(__dirname, 'public')));
 // ========================================================
 // ====================== Permission ======================
 
-// var notAuthenticated = {
+// const notAuthenticated = {
 // 	flashType: 'error',
 // 	message: 'The entered credentials are incorrect',
 // 	redirect: '/login'
 // };
-// var notAuthorized = {
+// const notAuthorized = {
 // 	redirect: '/',
 // 	message: 'no',
 // 	status: 302
@@ -106,11 +106,11 @@ app.get('/status', adminAuth, statusMonitor.pageRoute);
 // ========================================================
 // ====================== Routers =========================
 
-var indexRouter = require('./routes/index');
-var loginRouter = require('./routes/login');
-var logoutRouter = require('./routes/logout');
-var usersRouter = require('./routes/users');
-var logsRouter = require('./routes/logs');
+const indexRouter = require('./routes/index');
+const loginRouter = require('./routes/login');
+const logoutRouter = require('./routes/logout');
+const usersRouter = require('./routes/users');
+const logsRouter = require('./routes/logs');
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
 app.use('/login', loginRouter);
@@ -118,8 +118,8 @@ app.use('/logout', logoutRouter);
 app.use('/logs', logsRouter);
 
 
-var apiUsersRouter = require('./routes/api/users');
-var apiLogsRouter = require('./routes/api/logs');
+const apiUsersRouter = require('./routes/api/users');
+const apiLogsRouter = require('./routes/api/logs');
 app.use('/api/users', apiUsersRouter);
 app.use('/api/logs', apiLogsRouter);
 

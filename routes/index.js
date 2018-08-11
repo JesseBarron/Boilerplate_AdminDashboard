@@ -1,11 +1,11 @@
-var express = require('express');
-var router = express.Router();
-var adminAuth = require('./adminAuth');
-var User = require('../config/models/User').User;
-var ErrorLog = require('../config/models/ErrorLog').ErrorLog;
-var ActivityLog = require('../config/models/ActivityLog').ActivityLog;
-var common = require('../config/common');
-var moment = require('moment');
+const express = require('express');
+const router = express.Router();
+const adminAuth = require('./adminAuth');
+const User = require('../config/models/User').User;
+const ErrorLog = require('../config/models/ErrorLog').ErrorLog;
+const ActivityLog = require('../config/models/ActivityLog').ActivityLog;
+const common = require('../config/common');
+const moment = require('moment');
 
 /* GET home page. */
 router.get('/', adminAuth, async (req, res) => {
@@ -18,14 +18,14 @@ router.get('/', adminAuth, async (req, res) => {
 			ActivityLog.find(createdDateRange)
 		]
 		let [allUsers, allErrors, allActivities] = await Promise.all(promises);
-	
+
 		let [thisWeeksRegistrations, weeklyRegistrationIncreasePercent] = weekTotalAndPercentIncrease(allUsers);
-	
+
 		let [thisWeeksErrors, weeklyErrorIncreasePercent] = weekTotalAndPercentIncrease(allErrors);
-	
+
 		let allLogins = allActivities.filter( a => a.activity == 'Login' );
 		let [thisWeeksLogins, weeklyLoginIncreasePercent] = weekTotalAndPercentIncrease(allLogins);
-		
+
 		return res.render(
 			'index',
 			{
@@ -47,7 +47,7 @@ router.get('/', adminAuth, async (req, res) => {
 		common.LogError("500 GET /", error, req.user._id, req.ip);
 		return res.render('error500');
 	}
-	
+
 });
 
 /**
