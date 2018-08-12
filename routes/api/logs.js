@@ -26,8 +26,13 @@ router.post('/activity/filter', adminAuth, async (req, res) => {
 	try {
 		let minDate = req.body.minDate;
 		let maxDate = req.body.maxDate;
-		let filterDateRange = {created:{'$lte':moment(maxDate),'$gte':moment(minDate)}};
-		let activities = await ActivityLog.find(filterDateRange);
+		let activityFilter = new RegExp(req.body.activity,"i");
+		let filter = {
+			created:{'$lte':moment(maxDate),'$gte':moment(minDate)},
+			activity: activityFilter
+		};
+		console.log('filter',filter);
+		let activities = await ActivityLog.find(filter);
 
 		let dateTotals = activities.reduce((acc,curr,index)=>{
 			let dateCreated = moment(curr.created).format('YYYY-MM-DD');
