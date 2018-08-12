@@ -1,3 +1,5 @@
+var dateStart,
+    dateEnd;
 function init_daterangepicker() {
 
     if( typeof ($.fn.daterangepicker) === 'undefined'){ return; }
@@ -48,8 +50,10 @@ function init_daterangepicker() {
     };
     
     $('#reportrange span').html(moment().subtract(8, 'days').format('MMMM D, YYYY') + ' - ' + moment().format('MMMM D, YYYY'));
-    getLoginActivity(moment().subtract(8,'days').format('YYYY-MM-DD'),moment().format('YYYY-MM-DD'))
-    $('#reportrange').daterangepicker(optionSet1, cb);
+    dateStart = moment().subtract(8,'days').format('YYYY-MM-DD');
+    dateEnd = moment().format('YYYY-MM-DD');
+    getLoginActivity();
+    datepicker = $('#reportrange').daterangepicker(optionSet1, cb);
     $('#reportrange').on('show.daterangepicker', function() {
       console.log("show event fired...dillon");
     });
@@ -57,7 +61,9 @@ function init_daterangepicker() {
       console.log("hide event fired...dillon");
     });
     $('#reportrange').on('apply.daterangepicker', function(ev, picker) {
-      getLoginActivity(picker.startDate.format('YYYY-MM-DD'),picker.endDate.format('YYYY-MM-DD'))
+      dateStart = picker.startDate.format('YYYY-MM-DD');
+      dateEnd = picker.endDate.format('YYYY-MM-DD');
+      getLoginActivity();
       // console.log("apply event fired, start/end dates are " + picker.startDate.format('YYYY-MM-DD') + " to " + picker.endDate.format('MMMM D, YYYY'));
     });
     $('#reportrange').on('cancel.daterangepicker', function(ev, picker) {
@@ -142,12 +148,12 @@ var chart_plot_02_settings = {
   }
 };
 var dashboardGraph;
-if ($("#chart_plot_02").length){
+if ($("#chat_plot_activities").length){
   console.log('Plot2');
   
-  dashboardGraph = $.plot( $("#chart_plot_02"), 
+  dashboardGraph = $.plot( $("#chat_plot_activities"), 
   [{ 
-    label: "User Logins", 
+    label: "Activity", 
     data: chart_plot_02_data, 
     lines: { 
       fillColor: "rgba(86, 184, 157, 0.12)" 
@@ -158,16 +164,17 @@ if ($("#chart_plot_02").length){
   
 }
 
-function getLoginActivity(min,max) {
-  var minDate = moment(min)._d;
-  var maxDate = moment(max).add(20,'hours')._d;
+function getLoginActivity() {
+  var minDate = moment(dateStart)._d;
+  var maxDate = moment(dateEnd).add(24,'hours')._d;
+  var activity = jQuery('#activity').val();
   $.post(
     "/api/logs/activity/filter",
-    {minDate,maxDate},
+    {minDate,maxDate,activity},
     function(data, status){
-      $.plot( $("#chart_plot_02"), 
+      $.plot( $("#chat_plot_activities"), 
       [{ 
-        label: "User Logins", 
+        label: "Activity", 
         data: data.content, 
         lines: { 
           fillColor: "rgba(86, 184, 157, 0.12)" 

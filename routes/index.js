@@ -15,9 +15,10 @@ router.get('/', adminAuth, async (req, res) => {
 		let promises = [
 			User.find(),
 			ErrorLog.find(createdDateRange),
-			ActivityLog.find(createdDateRange)
+			ActivityLog.find(createdDateRange),
+			ActivityLog.distinct("activity")
 		]
-		let [allUsers, allErrors, allActivities] = await Promise.all(promises);
+		let [allUsers, allErrors, allActivities, distinctActivityTypes] = await Promise.all(promises);
 
 		let [thisWeeksRegistrations, weeklyRegistrationIncreasePercent] = weekTotalAndPercentIncrease(allUsers);
 
@@ -39,7 +40,8 @@ router.get('/', adminAuth, async (req, res) => {
 				thisWeeksErrors,
 				weeklyErrorIncreasePercent,
 				thisWeeksLogins,
-				weeklyLoginIncreasePercent
+				weeklyLoginIncreasePercent,
+				distinctActivityTypes
 			}
 		);
 	}
@@ -57,7 +59,7 @@ router.get('/', adminAuth, async (req, res) => {
  */
 function percentIncrease(newNumber, originalNumber){
 	let increase = newNumber - originalNumber;
-	return ((increase/originalNumber)*100);
+	return ((increase/originalNumber)*100).toFixed(2);
 }
 
 /**
