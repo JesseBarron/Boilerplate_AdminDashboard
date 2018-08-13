@@ -11,7 +11,8 @@ const moment = require('moment');
 router.get('/activity', adminAuth, async (req, res) => {
 	
 	try {
-		let logs = await ActivityLog.find({type:req.body.type});
+		let logs = await ActivityLog.find().sort({created:-1});
+		console.log("Logs:",logs);
 		return res.json({success:true,data:logs});
 	}
 	catch (error) {
@@ -31,7 +32,6 @@ router.post('/activity/filter', adminAuth, async (req, res) => {
 			created:{'$lte':moment(maxDate),'$gte':moment(minDate)},
 			activity: activityFilter
 		};
-		console.log('filter',filter);
 		let activities = await ActivityLog.find(filter);
 
 		let dateTotals = activities.reduce((acc,curr,index)=>{
@@ -45,38 +45,28 @@ router.post('/activity/filter', adminAuth, async (req, res) => {
 			return acc;
 		},{});
 
-		let dates = Object.keys(dateTotals),
-			start = moment(minDate).format('YYYY-MM-DD'),
+		let	start = moment(minDate).format('YYYY-MM-DD'),
 			end = moment(maxDate).format('YYYY-MM-DD');
-
-		// console.log('dates:',dates);
-		// console.log('start:',start);
-		// console.log('end:',end);
 
 		let nextDay = moment(start).format('YYYY-MM-DD');
 
 		while(nextDay <= end) {
-			// console.log('Checking if',nextDay,'exists');
 			if(!dateTotals[nextDay]){
-				// console.log('that day does not exist!');
 				dateTotals[nextDay] = 0;
-			}
-			else {
-				// console.log('Yup.. that day exists!');
 			}
 			nextDay = moment(nextDay).add(1,'days').format('YYYY-MM-DD');
 		}
 
-		let arrayOfArrays = [];
+		//Format the dates to preset to flot chart [['datetime','amount'],['datetime','amount'],...]
+		let flotFormattedDates = [];
 		for (const date in dateTotals) {
 			if (dateTotals.hasOwnProperty(date)) {
-				arrayOfArrays.push([new Date(date).getTime(),dateTotals[date]]);
+				flotFormattedDates.push([new Date(date).getTime(),dateTotals[date]]);
 			}
 		}
-
-		arrayOfArrays = arrayOfArrays.sort((a,b)=> a[0] - b[0] );
+		flotFormattedDates = flotFormattedDates.sort((a,b)=> a[0] - b[0] );
 		
-		return res.json({success:true,content:arrayOfArrays})
+		return res.json({success:true,content:flotFormattedDates})
 
 	}
 	catch (error) {
@@ -89,7 +79,7 @@ router.post('/activity/filter', adminAuth, async (req, res) => {
 router.get('/email', adminAuth, async (req, res) => {
 
 	try {
-		let logs = await EmailLog.find();
+		let logs = await EmailLog.find().sort({created:-1});
 		return res.json({success:true,data:logs});
 	}
 	catch (error) {
@@ -102,7 +92,7 @@ router.get('/email', adminAuth, async (req, res) => {
 router.get('/error', adminAuth, async (req, res) => {
 
 	try {
-		let logs = await ErrorLog.find();
+		let logs = await ErrorLog.find().sort({created:-1});
 		return res.json({success:true,data:logs});
 	}
 	catch (error) {

@@ -78,6 +78,35 @@
                           <b class="caret"></b>
                         </div>
                       </div>
+                      <div class="col-md-8 col-sm-8 col-xs-9">
+                        <div class="pull-right">
+                          <button id="startLiveBtn" onclick="startLiveChart()" class="btn btn-success">View live</button>
+                          <button id="stopLiveBtn" onclick="stopLiveChart()" class="btn btn-danger hidden">Stop live</button>
+                        </div>
+                        <script>
+                          var liveInterval, $startLiveBtn, $stopLiveBtn, startLiveChart, stopLiveChart;
+                          window.addEventListener('load', function(){
+                            $startLiveBtn = jQuery('#startLiveBtn');
+                            $stopLiveBtn = jQuery('#stopLiveBtn');
+                            startLiveChart = function(){
+                              $startLiveBtn.addClass('hidden');
+                              $stopLiveBtn.removeClass('hidden');
+                              liveInterval = setInterval(function(){
+                                getLoginActivity();
+                              },1000);
+                            }
+                            stopLiveChart = function(){
+                              $stopLiveBtn.addClass('hidden');
+                              $startLiveBtn.removeClass('hidden');
+                              clearInterval(liveInterval);
+                            }
+                          });
+                          window.addEventListener('unload', function(){
+                            console.log('unloading the window!!!');
+                            clearInterval(liveInterval);
+                          });
+                        </script>
+                      </div>
                     </div>
                     <div class="x_content">
                       <div class="demo-container" style="height:280px">
