@@ -6,9 +6,7 @@ router.get('/', (req, res) => {
     return res.render(
         'login',
         { 
-            title: 'Login',
-            errorMessages: req.flash('errorMessages'),
-            successMessages: req.flash('successMessages')
+            title: 'Login'
         }
     );
 });

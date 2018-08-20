@@ -32,8 +32,6 @@ router.get('/', adminAuth, async (req, res) => {
 			{
 				menu: 'dashboard',
 				title: 'Dashboard',
-				successMessages: req.flash('successMessages'),
-				errorMessages: req.flash('errorMessages'),
 				totalUsers: allUsers.length,
 				thisWeeksRegistrations,
 				weeklyRegistrationIncreasePercent,
@@ -46,7 +44,7 @@ router.get('/', adminAuth, async (req, res) => {
 		);
 	}
 	catch (error) {
-		common.LogError("500 GET /", error, req.user._id, req.ip);
+		common.LogError("500 GET /", error, req.user._id, req.ip,req.device.type,req.device.name);
 		return res.render('error500');
 	}
 

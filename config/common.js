@@ -1,6 +1,7 @@
 const ActivityLog = require('./models/ActivityLog').ActivityLog;
 const ErrorLog = require('./models/ErrorLog').ErrorLog;
 const EmailLog = require('./models/EmailLog').EmailLog;
+const AccessLog = require('./models/AccessLog').AccessLog;
 const nodemailer = require('nodemailer');
 
 
@@ -22,7 +23,7 @@ exports.SendEmail = async (emailArgs) => {
     try {
         let promises = [
             transport.sendMail(emailArgs),
-            LogEmail(emailArgs.to,emailArgs.subject,emailArgs.html)
+            LogEmail(emailArgs.to, emailArgs.subject, emailArgs.html)
         ];
         await Promise.all(promises);
     }
@@ -82,8 +83,10 @@ const LogEmail = async (to, subject, content) => {
  * @param {string} error The error message
  * @param {ObjectId} userId The id of the user that the error occurred for
  * @param {string} ip The ip address of the user that the error occured for
+ * @param {string} deviceType The device type
+ * @param {string} deviceName The device name
  */
-exports.LogError = async (category, error, userId, ip) => {
+exports.LogError = async (category, error, userId, ip, deviceType, deviceName) => {
 
     try {
         let _errorLog = new ErrorLog();
@@ -92,6 +95,8 @@ exports.LogError = async (category, error, userId, ip) => {
         _errorLog.error = error;
         _errorLog.user = userId;
         _errorLog.ip = ip;
+        _errorLog.deviceType = deviceType;
+        _errorLog.deviceName = deviceName;
         let errorLog = await _errorLog.save();
         return errorLog;
     }
@@ -110,8 +115,10 @@ exports.LogError = async (category, error, userId, ip) => {
  * @param {string} content Any information relating to the activity that has taken place
  * @param {ObjectId} userId The users objectId that has performed the activity
  * @param {string} ip The ip address of the user. Accessed through req.ip
+ * @param {string} deviceType The device type
+ * @param {string} deviceName The device name
  */
-exports.LogActivity = async (activity, content, userId, ip) => {
+exports.LogActivity = async (activity, content, userId, ip, deviceType, deviceName) => {
 
     try {
         let _activityLog = new ActivityLog();
@@ -120,6 +127,8 @@ exports.LogActivity = async (activity, content, userId, ip) => {
         _activityLog.content = content;
         _activityLog.user = userId;
         _activityLog.ip = ip;
+        _activityLog.deviceType = deviceType;
+        _activityLog.deviceName = deviceName;
         let activityLog = await _activityLog.save();
         return activityLog;
     }
@@ -127,4 +136,80 @@ exports.LogActivity = async (activity, content, userId, ip) => {
         throw new Error(error);
     }
 
+}
+
+
+/**
+ * Logs access to the database
+ * @param {string} route The route that is being accessed
+ * @param {string} userId The id of the user that is accessing the route
+ * @param {string} ip The ip address of the request
+ * @param {string} deviceType The device type
+ * @param {string} deviceName The device name
+ */
+exports.LogAccess = async (route, userId, ip, deviceType, deviceName) => {
+
+    try {
+        let _accessLog = new AccessLog();
+        _accessLog.created = new Date();
+        _accessLog.deviceType = deviceType;
+        _accessLog.deviceName = deviceName;
+        _accessLog.route = route;
+        _accessLog.userId = userId;
+        _accessLog.ip = ip;
+        let accessLog = await _accessLog.save();
+        return accessLog;
+
+    }
+    catch (error) {
+        throw new Error(error);
+    }
+
+}
+
+/**
+ * Upload/move an image assuming the use of express-fileupload
+ * @param {Object} image The file object that lives on the request object e.g. req.files
+ * @param {string} userId The id of the user that is uploading the image
+ */
+exports.UploadImage = (image, userId) => {
+
+    return new Promise((resolve,reject) => {
+        
+        let findFileExt = /(?:\.([^.]+))?$/; //gets the file extension
+        let ext = findFileExt.exec(image.name)[1];
+        let timestamp = new Date().getTime();
+        let guid = exports.guid(false);
+    
+        if (ext === undefined) {
+            reject("Attempted to upload the image, but there was no extension.");
+        }
+        else {
+            let imagePath = 'public/uploads/' + userId + '_' + guid + '_' + timestamp + '.' + ext;
+            let retrievePath = process.env.apiUrl + 'uploads/' + userId + '_' + guid + '_' + timestamp + '.' + ext;
+            image.mv(imagePath, (err) => {
+    
+                if (err) {
+                    reject(err);
+                }
+                else {
+                    resolve(retrievePath);
+                }
+    
+            });
+        }
+
+    });
+
+}
+
+
+/**
+ * Returns a Globally Unique Identifier with or without dashes
+ * @param {boolean} dashes whether or not to add dashes to the output string. Defaults to true
+ */
+exports.guid = (dashes=true) => {
+    function b(a){return a?(a^Math.random()*16>>a/4).toString(16):([1e7]+-1e3+-4e3+-8e3+-1e11).replace(/[018]/g,b)}
+    let guid = b();
+    return ( dashes ? guid : guid.replace(/-/g,'') );
 }

@@ -5,6 +5,9 @@ const cookieParser = require('cookie-parser');
 const logger = require('morgan');
 const flash = require('connect-flash');
 const permission = require('permission');
+const device = require('express-device');
+const useragent = require('useragent');
+useragent(true);
 const app = express();
 
 require('dotenv').config();
@@ -40,6 +43,10 @@ app.use(bodyParser.urlencoded({
 app.use(passport.initialize());
 app.use(passport.session());
 
+app.use(device.capture({
+	parseUserAgent: true
+}));
+
 app.use(flash());
 
 // view engine setup
@@ -51,6 +58,9 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
+
+//Need this in order to grab the users IP address!
+app.enable('trust proxy')
 
 // ========================================================
 // ====================== Permission ======================
@@ -91,10 +101,37 @@ app.locals.COMPANY_FA_ICON = process.env.COMPANY_FA_ICON;
 // ========================================================
 
 //Store the user in "locals" in order to access in the view
-app.use((req,res,next)=>{
+const LogAccess = require('./config/common').LogAccess;
+const LogError = require('./config/common').LogError;
+const User = require('./config/models/User').User;
+app.use( async (req,res,next)=>{
+	res.locals.successMessages = req.flash('successMessages');
+	res.locals.errorMessages = req.flash('errorMessages');
+
+	let userId = '';
 	if (req.user) {
+		userId = req.user._id;
 		res.locals.user = req.user;
+
+		try {
+			let _user = await User.findOne({_id:userId});
+			let indexOfIp = _user.ips.findIndex( e => e.ip == req.ip );
+			if (indexOfIp == -1) {
+				_user.ips.push({ip:req.ip,accessCount:1});
+			}
+			else {
+				_user.ips[indexOfIp].accessCount += 1;
+			}
+			let user = await _user.save();
+		}
+		catch (error) {
+			LogError(`500 ${req.url} update user middlewares`,error,userId,req.ip,req.device.type,req.device.name);
+			return res.render('error500');
+		}
+		
 	}
+	
+	LogAccess(req.url,userId,req.ip,req.device.type,req.device.name);
 	next();
 });
 

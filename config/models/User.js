@@ -7,8 +7,19 @@ var UserSchema = mongoose.Schema({
     role: String,
     // profile: { type: mongoose.Schema.Types.ObjectId, ref: 'Profile' },
     jwt: String,
-    created: Date
-    
+    created: Date,
+    lastSeen: Date,
+    ips: [{
+        ip: String,
+        accessCount: Number
+    }]
+    // ips: [{ type: String, unique: true }]
+    // {
+    //     ip: String,
+    //     count: Number
+    // }
+    // Keep track of number of logins per ip address.. potential use case is keeping track of home/work machines
+
 })
 
 
