@@ -14,7 +14,7 @@ router.get('/', adminAuth, async (req, res) => {
 		return res.json({success:true,data:users});
 	}
 	catch (error) {
-		common.LogError('API GET /users',error,req.user._id,req.ip);
+		common.LogError('API GET /users',error,req.user._id,req.ip,req.device.type,req.device.name);
 		return res.json({success:false,message:"There was a problem processing that request. If the problem persists, please contact support."});
 	}
 	
@@ -44,11 +44,13 @@ router.post('/', adminAuth, async (req, res) => {
 		_user.password = hash;
 		_user.role = req.body.role;
 		_user.created = new Date();
+		_user.ips = [];
+		_user.lastSeen = null;
 
 		let user = await _user.save();
 
 		let activityContent = "User by id "+req.user._id+" created a new user by id "+user._id;
-		common.LogActivity("Create User",activityContent,req.user._id,req.ip);
+		common.LogActivity("Create User",activityContent,req.user._id,req.ip,req.device.type,req.device.name);
 		
 		let email = {
 			to: user.email,
@@ -65,7 +67,7 @@ router.post('/', adminAuth, async (req, res) => {
 		
 	}
 	catch (error) {
-		common.LogError("Create User",error,req.user._id,req.ip);
+		common.LogError("Create User",error,req.user._id,req.ip,req.device.type,req.device.name);
 
 		req.flash('errorMessages',"There was an problem processing that request. If this problem persists, please contact support");
 		return res.redirect('/users');
@@ -83,11 +85,11 @@ router.delete('/:_id', adminAuth, permission(['SuperAdmin']), async (req, res) =
 		await User.deleteOne({_id});
 
 		let activityContent = "User by id:"+req.user._id+" deleted the user by id:"+_id;
-		await common.LogActivity("Delete User",activityContent,req.user._id,req.ip);
+		await common.LogActivity("Delete User",activityContent,req.user._id,req.ip,req.device.type,req.device.name);
 		return res.json({success:true,message:"Successfully deleted user!"});
 	}
 	catch (error) {
-		common.LogError('API DELETE /users',error,req.user._id,req.ip);
+		common.LogError('API DELETE /users',error,req.user._id,req.ip,req.device.type,req.device.name);
 		return res.json({success:false,message:"There was a problem processing that request. If the problem persists, please contact support."});
 	}
 	

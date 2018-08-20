@@ -12,11 +12,10 @@ router.get('/activity', adminAuth, async (req, res) => {
 	
 	try {
 		let logs = await ActivityLog.find().sort({created:-1});
-		console.log("Logs:",logs);
 		return res.json({success:true,data:logs});
 	}
 	catch (error) {
-		common.LogError('500 API GET /logs/activity',error,req.user._id,req.ip);
+		common.LogError('500 API GET /logs/activity',error,req.user._id,req.ip,req.device.type,req.device.name);
 		return res.json({success:false,message:"There was a problem processing that request. If the problem persists, please contact support."});
 	}
 	
@@ -70,7 +69,7 @@ router.post('/activity/filter', adminAuth, async (req, res) => {
 
 	}
 	catch (error) {
-		common.LogError('API POST /activity/filter',error,req.user._id,req.ip);
+		common.LogError('API POST /activity/filter',error,req.user._id,req.ip,req.device.type,req.device.name);
 		return res.json({success:false,message:"There was a problem processing that request. If the problem persists, please contact support."});
 	}
 
@@ -83,7 +82,7 @@ router.get('/email', adminAuth, async (req, res) => {
 		return res.json({success:true,data:logs});
 	}
 	catch (error) {
-		common.LogError('500 API GET /logs/email',error,req.user._id,req.ip);
+		common.LogError('500 API GET /logs/email',error,req.user._id,req.ip,req.device.type,req.device.name);
 		return res.json({success:false,message:"There was a problem processing that request. If the problem persists, please contact support."});
 	}
 	
@@ -96,7 +95,7 @@ router.get('/error', adminAuth, async (req, res) => {
 		return res.json({success:true,data:logs});
 	}
 	catch (error) {
-		common.LogError('500 API GET /logs/error',error,req.user._id,req.ip);
+		common.LogError('500 API GET /logs/error',error,req.user._id,req.ip,req.device.type,req.device.name);
 		return res.json({success:false,message:"There was a problem processing that request. If the problem persists, please contact support."});
 	}
 	

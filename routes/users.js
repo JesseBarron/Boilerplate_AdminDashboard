@@ -9,9 +9,7 @@ router.get('/', adminAuth, (req, res, next) => {
     'users',
     { 
       menu: 'users',
-      title: 'Users',
-      successMessages: req.flash('successMessages'),
-      errorMessages: req.flash('errorMessages')
+      title: 'Users'
     }
   );
 });
