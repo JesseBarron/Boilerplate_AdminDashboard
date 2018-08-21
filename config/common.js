@@ -1,7 +1,6 @@
 const ActivityLog = require('./models/ActivityLog').ActivityLog;
 const ErrorLog = require('./models/ErrorLog').ErrorLog;
 const EmailLog = require('./models/EmailLog').EmailLog;
-const AccessLog = require('./models/AccessLog').AccessLog;
 const nodemailer = require('nodemailer');
 
 
@@ -138,34 +137,6 @@ exports.LogActivity = async (activity, content, userId, ip, deviceType, deviceNa
 
 }
 
-
-/**
- * Logs access to the database
- * @param {string} route The route that is being accessed
- * @param {string} userId The id of the user that is accessing the route
- * @param {string} ip The ip address of the request
- * @param {string} deviceType The device type
- * @param {string} deviceName The device name
- */
-exports.LogAccess = async (route, userId, ip, deviceType, deviceName) => {
-
-    try {
-        let _accessLog = new AccessLog();
-        _accessLog.created = new Date();
-        _accessLog.deviceType = deviceType;
-        _accessLog.deviceName = deviceName;
-        _accessLog.route = route;
-        _accessLog.userId = userId;
-        _accessLog.ip = ip;
-        let accessLog = await _accessLog.save();
-        return accessLog;
-
-    }
-    catch (error) {
-        throw new Error(error);
-    }
-
-}
 
 /**
  * Upload/move an image assuming the use of express-fileupload

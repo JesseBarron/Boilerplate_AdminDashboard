@@ -27,6 +27,8 @@ router.get('/', adminAuth, async (req, res) => {
 		let allLogins = allActivities.filter( a => a.activity == 'Login' );
 		let [thisWeeksLogins, weeklyLoginIncreasePercent] = weekTotalAndPercentIncrease(allLogins);
 
+		distinctActivityTypes = distinctActivityTypes.sort( (a,b) => a > b );
+		
 		return res.render(
 			'index',
 			{
