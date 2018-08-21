@@ -100,16 +100,23 @@ app.locals.COMPANY_FA_ICON = process.env.COMPANY_FA_ICON;
 // ===================== SEEDING ==========================
 // ========================================================
 
-//Store the user in "locals" in order to access in the view
-const LogAccess = require('./config/common').LogAccess;
+
+
+
+// ========================================================
+// ========================================================
+// ===================== MIDDLEWARE =======================
+
+const LogActivity = require('./config/common').LogActivity;
 const LogError = require('./config/common').LogError;
 const User = require('./config/models/User').User;
 app.use( async (req,res,next)=>{
 	res.locals.successMessages = req.flash('successMessages');
 	res.locals.errorMessages = req.flash('errorMessages');
-
+	
 	let userId = '';
 	if (req.user) {
+		//Store the user in "locals" in order to access in the view
 		userId = req.user._id;
 		res.locals.user = req.user;
 
@@ -122,16 +129,17 @@ app.use( async (req,res,next)=>{
 			else {
 				_user.ips[indexOfIp].accessCount += 1;
 			}
+			_user.lastSeen = new Date();
 			let user = await _user.save();
 		}
 		catch (error) {
 			LogError(`500 ${req.url} update user middlewares`,error,userId,req.ip,req.device.type,req.device.name);
 			return res.render('error500');
 		}
-		
+
 	}
-	
-	LogAccess(req.url,userId,req.ip,req.device.type,req.device.name);
+
+	LogActivity("Access",req.url,userId,req.ip,req.device.type,req.device.name);
 	next();
 });
 
@@ -139,6 +147,13 @@ const adminAuth = require('./routes/adminAuth');
 const statusMonitor = require('express-status-monitor')();
 app.use(statusMonitor);
 app.get('/status', adminAuth, statusMonitor.pageRoute);
+
+// ===================== MIDDLEWARE =======================
+// ========================================================
+// ========================================================
+
+
+
 
 // ========================================================
 // ====================== Routers =========================
