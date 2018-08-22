@@ -186,4 +186,42 @@ function getLoginActivity() {
   );
 }
 
+
+function init_chart_doughnut() {
+  $.get(
+    "/api/logs/devices",
+    function(data, status){
+      var dataLength = Object.keys(data).length;
+      var backgrounds = ["#BDC3C7", "#9B59B6", "#E74C3C", "#26B99A", "#3498DB"];
+      var hovers = ["#CFD4D8", "#B370CF", "#E95E4F", "#36CAAB", "#49A9EA"];
+      if ("undefined" != typeof Chart && (console.log("init_chart_doughnut"),
+      $(".canvasDoughnut").length)) {
+          var a = {
+              type: "doughnut",
+              tooltipFillColor: "rgba(51, 51, 51, 0.55)",
+              data: {
+                  labels: Object.keys(data),
+                  datasets: [{
+                      data: Object.values(data),
+                      backgroundColor: backgrounds.slice(0,dataLength),
+                      hoverBackgroundColor: hovers.slice(0,dataLength)
+                  }]
+              },
+              options: {
+                  legend: !1,
+                  responsive: !1
+              }
+          };
+          $(".canvasDoughnut").each(function() {
+              var b = $(this);
+              new Chart(b,a)
+          })
+      }
+
+    }
+  );
+}
+
+
 init_daterangepicker();
+init_chart_doughnut();

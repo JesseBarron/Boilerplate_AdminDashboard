@@ -101,4 +101,31 @@ router.get('/error', adminAuth, async (req, res) => {
 	
 });
 
+
+router.get('/devices', adminAuth, async (req, res) => {
+
+	try {
+		let devices = await ActivityLog.find();
+		devices = devices.reduce((acc,curr)=>{
+			if (!curr.deviceName) return acc;
+
+			if (acc[`${curr.deviceType} | ${curr.deviceName}`]) {
+				acc[`${curr.deviceType} | ${curr.deviceName}`] += 1
+			}
+			else {
+				acc[`${curr.deviceType} | ${curr.deviceName}`] = 1
+			}
+
+			return acc;
+		},{});
+
+		return res.json(devices);
+	}
+	catch (error) {
+		common.LogError('500 API GET /logs/devices',error,req.user._id,req.ip,req.device.type,req.device.name);
+		return res.json({success:false,message:"There was a problem processing that request. If the problem persists, please contact support."});
+	}
+
+});
+
 module.exports = router;
