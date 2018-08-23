@@ -111,13 +111,15 @@ const LogActivity = require('./config/common').LogActivity;
 const LogError = require('./config/common').LogError;
 const User = require('./config/models/User').User;
 app.use( async (req,res,next)=>{
+	res.locals.successMessages = req.flash('successMessages');
+	res.locals.errorMessages = req.flash('errorMessages');
+
+	//Pass location object with latitude/longitude as header from app to api as often as possible to get latest updated location record
 	let location = null;
 	if (req.headers.location) {
 		let parsedLoc = JSON.parse(req.headers.location)
 		location = parsedLoc;
 	}
-	res.locals.successMessages = req.flash('successMessages');
-	res.locals.errorMessages = req.flash('errorMessages');
 	
 	let userId = null,
 		latitude = ((location && location.latitude) || null),
@@ -126,9 +128,9 @@ app.use( async (req,res,next)=>{
 		//Store the user in "locals" in order to access in the view
 		userId = req.user._id;
 		res.locals.user = req.user;
-
+		
 		try {
-			let _user = await User.findOne({_id:userId});
+			let _user = req.user;
 			let indexOfIp = _user.ips.findIndex( e => e.ip == req.ip );
 			//Keep track of users ip addresses and the access count per ip address
 			if (indexOfIp == -1) {
