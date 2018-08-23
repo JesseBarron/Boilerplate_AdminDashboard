@@ -12,7 +12,11 @@ var UserSchema = mongoose.Schema({
     ips: [{
         ip: String,
         accessCount: Number
-    }]
+    }],
+    location: {
+        latitude: Number,
+        longitude: Number
+    }
     // ips: [{ type: String, unique: true }]
     // {
     //     ip: String,
