@@ -111,12 +111,17 @@ const LogActivity = require('./config/common').LogActivity;
 const LogError = require('./config/common').LogError;
 const User = require('./config/models/User').User;
 app.use( async (req,res,next)=>{
+	let location = null;
+	if (req.headers.location) {
+		let parsedLoc = JSON.parse(req.headers.location)
+		location = parsedLoc;
+	}
 	res.locals.successMessages = req.flash('successMessages');
 	res.locals.errorMessages = req.flash('errorMessages');
 	
 	let userId = null,
-		latitude = null,
-		longitude = null;
+		latitude = ((location && location.latitude) || null),
+		longitude = ((location && location.longitude) || null);
 	if (req.user) {
 		//Store the user in "locals" in order to access in the view
 		userId = req.user._id;
@@ -134,9 +139,8 @@ app.use( async (req,res,next)=>{
 			}
 			_user.lastSeen = new Date();
 
-			//Update the users lat/lng if it's provided in the req body
-			if (req.body.location && req.body.location.latitude && req.body.location.longitude) {
-				let {latitude, longitude} = req.body.location;
+			//Update the users lat/lng if it's provided in the req header
+			if (location && latitude && longitude) {
 				if (typeof parseFloat(latitude) == 'number' && typeof parseFloat(longitude) == 'number') {
 					_user.location.latitude = parseFloat(latitude);
 					_user.location.longitude = parseFloat(longitude);

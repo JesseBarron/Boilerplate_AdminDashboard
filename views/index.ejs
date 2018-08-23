@@ -219,13 +219,20 @@
       getHeatMapData();
 
       function getHeatMapData(){
-        $.get('/api/logs/heatmap', function(data,status){
-          var heatMapData = {
-            max: 8,
-            data
-          };
-          heatmapLayer.setData(heatMapData);
-        });
+        navigator.geolocation.getCurrentPosition(function(position){
+          $.ajaxSetup({
+            headers:{
+              'location':JSON.stringify({latitude:position.coords.latitude,longitude:position.coords.longitude})
+            }
+          });
+          $.get('/api/logs/heatmap', function(data,status){
+            var heatMapData = {
+              max: 8,
+              data
+            };
+            heatmapLayer.setData(heatMapData);
+          });
+        })
       }
       
     </script>
