@@ -12,6 +12,7 @@ router.get('/activity', adminAuth, async (req, res) => {
 	
 	try {
 		let logs = await ActivityLog.find().sort({created:-1});
+							
 		return res.json({success:true,data:logs});
 	}
 	catch (error) {
@@ -31,7 +32,7 @@ router.post('/activity/filter', adminAuth, async (req, res) => {
 			created:{'$lte':moment(maxDate),'$gte':moment(minDate)},
 			activity: activityFilter
 		};
-		let activities = await ActivityLog.find(filter);
+		let activities = await ActivityLog.find(filter)
 
 		let dateTotals = activities.reduce((acc,curr,index)=>{
 			let dateCreated = moment(curr.created).format('YYYY-MM-DD');
@@ -126,6 +127,30 @@ router.get('/devices', adminAuth, async (req, res) => {
 		return res.json({success:false,message:"There was a problem processing that request. If the problem persists, please contact support."});
 	}
 
+});
+
+
+//Get all access activity and grab lat/lng if exists
+//If the access data set becomes too large, we can display last 30 days of activity
+router.get('/heatmap', adminAuth, async (req, res) => {
+
+	try {
+		let accessActivity = await ActivityLog.find({activity:'Access',latitude:{$ne:null}});
+
+		accessActivity = accessActivity.map((a)=>{
+			return {
+				lat: a.latitude,
+				lng: a.longitude,
+				count: 1
+			}
+		});
+		return res.json(accessActivity);
+	}
+	catch (error) {
+		common.LogError('500 API GET /logs/heatmap',error,req.user._id,req.ip,req.device.type,req.device.name);
+		return res.json({success:false,message:"There was a problem processing that request. If the problem persists, please contact support."});
+	}
+	
 });
 
 module.exports = router;

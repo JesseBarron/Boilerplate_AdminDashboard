@@ -4,6 +4,7 @@ const adminAuth = require('./adminAuth');
 const common = require('../config/common');
 const permission = require('permission');
 const bcrypt = require('bcrypt');
+const User = require('../config/models/User').User;
 
 /* GET users listing. */
 router.get('/', adminAuth, (req, res, next) => {
@@ -42,10 +43,14 @@ router.post('/', adminAuth, async (req, res) => {
 		_user.created = new Date();
 		_user.ips = [];
 		_user.lastSeen = null;
+		_user.location = {
+			latitude: parseFloat(req.body.latitude) || null,
+			longitude: parseFloat(req.body.longitude) || null
+		}
 
 		let user = await _user.save();
 
-		let activityContent = "User by id "+req.user._id+" created a new user by id "+user._id;
+		let activityContent = "User "+req.user.email+" created a new user "+user.email;
 		common.LogActivity("Create User",activityContent,req.user._id,req.ip,req.device.type,req.device.name);
 		
 		let email = {
@@ -55,7 +60,7 @@ router.post('/', adminAuth, async (req, res) => {
 		}
 		common.SendEmail(email);
 		
-		req.flash('successMessages','Successfully create the new user!');
+		req.flash('successMessages',`Successfully created new user ${user.email}!`);
 		return res.redirect('/users');
 		
 		//If using ajax

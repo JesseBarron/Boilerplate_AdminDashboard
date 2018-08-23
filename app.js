@@ -114,7 +114,9 @@ app.use( async (req,res,next)=>{
 	res.locals.successMessages = req.flash('successMessages');
 	res.locals.errorMessages = req.flash('errorMessages');
 	
-	let userId = '';
+	let userId = null,
+		latitude = null,
+		longitude = null;
 	if (req.user) {
 		//Store the user in "locals" in order to access in the view
 		userId = req.user._id;
@@ -123,6 +125,7 @@ app.use( async (req,res,next)=>{
 		try {
 			let _user = await User.findOne({_id:userId});
 			let indexOfIp = _user.ips.findIndex( e => e.ip == req.ip );
+			//Keep track of users ip addresses and the access count per ip address
 			if (indexOfIp == -1) {
 				_user.ips.push({ip:req.ip,accessCount:1});
 			}
@@ -130,6 +133,17 @@ app.use( async (req,res,next)=>{
 				_user.ips[indexOfIp].accessCount += 1;
 			}
 			_user.lastSeen = new Date();
+
+			//Update the users lat/lng if it's provided in the req body
+			if (req.body.location && req.body.location.latitude && req.body.location.longitude) {
+				let {latitude, longitude} = req.body.location;
+				if (typeof parseFloat(latitude) == 'number' && typeof parseFloat(longitude) == 'number') {
+					_user.location.latitude = parseFloat(latitude);
+					_user.location.longitude = parseFloat(longitude);
+					latitude = parseFloat(latitude);
+					longitude = parseFloat(longitude);
+				}
+			}
 			let user = await _user.save();
 		}
 		catch (error) {
@@ -139,7 +153,11 @@ app.use( async (req,res,next)=>{
 
 	}
 
-	LogActivity("Access",req.url,userId,req.ip,req.device.type,req.device.name);
+	//Don't care to log access if the user is an Admin or SuperAdmin. Only log access if the request is from a regular user
+	if (req.user && (req.user.role !== 'Admin' && req.user.role !== 'SuperAdmin')) {
+		LogActivity("Access",req.url,userId,req.ip,req.device.type,req.device.name,latitude,longitude);
+	}
+
 	next();
 });
 

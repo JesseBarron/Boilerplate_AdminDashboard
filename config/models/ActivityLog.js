@@ -8,6 +8,8 @@ var ActivityLogSchema = mongoose.Schema({
     activity: String,
     content: String,
     ip: String,
+    latitude: Number,
+    longitude: Number,
     user: {type: mongoose.Schema.Types.ObjectId, ref: 'User'}
 
 });

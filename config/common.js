@@ -116,8 +116,10 @@ exports.LogError = async (category, error, userId, ip, deviceType, deviceName) =
  * @param {string} ip The ip address of the user. Accessed through req.ip
  * @param {string} deviceType The device type
  * @param {string} deviceName The device name
+ * @param {Number} latitude Point of latitude for the activity
+ * @param {Number} longitude Point of longitude for the activity
  */
-exports.LogActivity = async (activity, content, userId, ip, deviceType, deviceName) => {
+exports.LogActivity = async (activity, content, userId, ip, deviceType, deviceName, latitude=null, longitude=null) => {
 
     try {
         let _activityLog = new ActivityLog();
@@ -128,6 +130,8 @@ exports.LogActivity = async (activity, content, userId, ip, deviceType, deviceNa
         _activityLog.ip = ip;
         _activityLog.deviceType = deviceType;
         _activityLog.deviceName = deviceName;
+        _activityLog.latitude = latitude;
+        _activityLog.longitude = longitude;
         let activityLog = await _activityLog.save();
         return activityLog;
     }
