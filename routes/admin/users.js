@@ -1,10 +1,10 @@
 const express = require('express');
 const router = express.Router();
-const adminAuth = require('./adminAuth');
-const common = require('../config/common');
+const adminAuth = require('../../middlewares/adminAuth');
+const common = require('../../config/common');
 const permission = require('permission');
 const bcrypt = require('bcrypt');
-const User = require('../config/models/User').User;
+const User = require('../../models/User').User;
 
 /* GET users listing. */
 router.get('/', adminAuth, (req, res, next) => {
@@ -61,7 +61,7 @@ router.post('/', adminAuth, async (req, res) => {
 		common.SendEmail(email);
 		
 		req.flash('successMessages',`Successfully created new user ${user.email}!`);
-		return res.redirect('/users');
+		return res.redirect('/admin/users');
 		
 		//If using ajax
 		// return res.json({success:true,message:"Successfully created the new user!"});
@@ -71,7 +71,7 @@ router.post('/', adminAuth, async (req, res) => {
 		common.LogError("Create User",error,req.user._id,req.ip,req.device.type,req.device.name);
 
 		req.flash('errorMessages',"There was an problem processing that request. If this problem persists, please contact support");
-		return res.redirect('/users');
+		return res.redirect('/admin/users');
 		
 		// return res.json({success:false,message:"There was an problem processing that request. If this problem persists, please contact support"});
 	}
@@ -85,7 +85,7 @@ router.delete('/:_id', adminAuth, permission(['SuperAdmin']), async (req, res) =
 		let _id = req.params._id;
 		await User.deleteOne({_id});
 
-		let activityContent = "User by id:"+req.user._id+" deleted the user by id:"+_id;
+		let activityContent = "User "+req.user.email+" deleted the user by id:"+_id;
 		await common.LogActivity("Delete User",activityContent,req.user._id,req.ip,req.device.type,req.device.name);
 		return res.json({success:true,message:"Successfully deleted user!"});
 	}

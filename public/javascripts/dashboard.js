@@ -169,7 +169,7 @@ function getLoginActivity() {
   var maxDate = moment(dateEnd).add(24,'hours')._d;
   var activity = jQuery('#activity').val();
   $.post(
-    "/api/logs/activity/filter",
+    "/admin/api/logs/activity/filter",
     {minDate,maxDate,activity},
     function(data, status){
       $.plot( $("#chat_plot_activities"), 
@@ -189,7 +189,7 @@ function getLoginActivity() {
 
 function init_chart_doughnut() {
   $.get(
-    "/api/logs/devices",
+    "/admin/api/logs/devices",
     function(data, status){
       var dataLength = Object.keys(data).length;
       var backgrounds = ["#BDC3C7", "#9B59B6", "#E74C3C", "#26B99A", "#3498DB"];

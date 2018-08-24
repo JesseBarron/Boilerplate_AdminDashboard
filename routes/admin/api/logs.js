@@ -1,10 +1,10 @@
-const ActivityLog = require('../../config/models/ActivityLog').ActivityLog;
-const EmailLog = require('../../config/models/EmailLog').EmailLog;
-const ErrorLog = require('../../config/models/ErrorLog').ErrorLog;
+const ActivityLog = require('../../../models/ActivityLog').ActivityLog;
+const EmailLog = require('../../../models/EmailLog').EmailLog;
+const ErrorLog = require('../../../models/ErrorLog').ErrorLog;
 const express = require('express');
 const router = express.Router();
-const adminAuth = require('../adminAuth');
-const common = require('../../config/common');
+const adminAuth = require('../../../middlewares/adminAuth');
+const common = require('../../../config/common');
 const moment = require('moment');
 
 /* GET all logs */
@@ -144,6 +144,7 @@ router.get('/heatmap', adminAuth, async (req, res) => {
 				count: 1
 			}
 		});
+		
 		return res.json(accessActivity);
 	}
 	catch (error) {
