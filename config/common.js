@@ -1,6 +1,6 @@
-const ActivityLog = require('./models/ActivityLog').ActivityLog;
-const ErrorLog = require('./models/ErrorLog').ErrorLog;
-const EmailLog = require('./models/EmailLog').EmailLog;
+const ActivityLog = require('../models/ActivityLog').ActivityLog;
+const ErrorLog = require('../models/ErrorLog').ErrorLog;
+const EmailLog = require('../models/EmailLog').EmailLog;
 const nodemailer = require('nodemailer');
 
 

@@ -65,21 +65,22 @@ app.enable('trust proxy')
 // ========================================================
 // ====================== Permission ======================
 
-// const notAuthenticated = {
-// 	flashType: 'error',
-// 	message: 'The entered credentials are incorrect',
-// 	redirect: '/login'
-// };
-// const notAuthorized = {
-// 	redirect: '/',
-// 	message: 'no',
-// 	status: 302
-// };
-// app.set('permission', {
-// 	role: 'role',
-// 	notAuthenticated: notAuthenticated,
-// 	notAuthorized: notAuthorized
-// });
+const notAuthenticated = {
+	flashType: 'errorMessages',
+	message: 'The entered credentials are incorrect',
+	redirect: '/admin/login'
+};
+const notAuthorized = {
+	flashType: 'errorMessages',
+	message: 'You do not have permissions to view this page',
+	redirect: '/admin/login',
+	status: 302
+};
+app.set('permission', {
+	role: 'role',
+	notAuthenticated: notAuthenticated,
+	notAuthorized: notAuthorized
+});
 
 // ====================== Permission ======================
 // ========================================================
@@ -104,76 +105,23 @@ app.locals.COMPANY_FA_ICON = process.env.COMPANY_FA_ICON;
 
 
 // ========================================================
-// ========================================================
 // ===================== MIDDLEWARE =======================
 
-const LogActivity = require('./config/common').LogActivity;
-const LogError = require('./config/common').LogError;
-const User = require('./config/models/User').User;
-app.use( async (req,res,next)=>{
-	res.locals.successMessages = req.flash('successMessages');
-	res.locals.errorMessages = req.flash('errorMessages');
+//Decodes the user
+const jwtExtract = require('./middlewares/jwtExtract');
+app.use(jwtExtract);
+const mainMiddleware = require('./middlewares/main');
+app.use(mainMiddleware);
 
-	//Pass location object with latitude/longitude as header from app to api as often as possible to get latest updated location record
-	let location = null;
-	if (req.headers.location) {
-		let parsedLoc = JSON.parse(req.headers.location)
-		location = parsedLoc;
-	}
-	
-	let userId = null,
-		latitude = ((location && location.latitude) || null),
-		longitude = ((location && location.longitude) || null);
-	if (req.user) {
-		//Store the user in "locals" in order to access in the view
-		userId = req.user._id;
-		res.locals.user = req.user;
-		
-		try {
-			let _user = req.user;
-			let indexOfIp = _user.ips.findIndex( e => e.ip == req.ip );
-			//Keep track of users ip addresses and the access count per ip address
-			if (indexOfIp == -1) {
-				_user.ips.push({ip:req.ip,accessCount:1});
-			}
-			else {
-				_user.ips[indexOfIp].accessCount += 1;
-			}
-			_user.lastSeen = new Date();
 
-			//Update the users lat/lng if it's provided in the req header
-			if (location && latitude && longitude) {
-				if (typeof parseFloat(latitude) == 'number' && typeof parseFloat(longitude) == 'number') {
-					_user.location.latitude = parseFloat(latitude);
-					_user.location.longitude = parseFloat(longitude);
-					latitude = parseFloat(latitude);
-					longitude = parseFloat(longitude);
-				}
-			}
-			let user = await _user.save();
-		}
-		catch (error) {
-			LogError(`500 ${req.url} update user middlewares`,error,userId,req.ip,req.device.type,req.device.name);
-			return res.render('error500');
-		}
-
-	}
-
-	//Don't care to log access if the user is an Admin or SuperAdmin. Only log access if the request is from a regular user
-	if (req.user && (req.user.role !== 'Admin' && req.user.role !== 'SuperAdmin')) {
-		LogActivity("Access",req.url,userId,req.ip,req.device.type,req.device.name,latitude,longitude);
-	}
-
-	next();
+const adminAuth = require('./middlewares/adminAuth');
+const statusMonitor = require('express-status-monitor')();
+//Must be authorized as an admin and be a 'SuperAdmin'
+app.get('/admin/status', adminAuth, permission(['SuperAdmin']), (req, res) => {
+	statusMonitor.pageRoute(req, res);
 });
 
-const adminAuth = require('./routes/adminAuth');
-const statusMonitor = require('express-status-monitor')();
-app.use(statusMonitor);
-app.get('/status', adminAuth, statusMonitor.pageRoute);
-
 // ===================== MIDDLEWARE =======================
-// ========================================================
 // ========================================================
 
 
@@ -182,22 +130,31 @@ app.get('/status', adminAuth, statusMonitor.pageRoute);
 // ========================================================
 // ====================== Routers =========================
 
-const indexRouter = require('./routes/index');
-const loginRouter = require('./routes/login');
-const logoutRouter = require('./routes/logout');
-const usersRouter = require('./routes/users');
-const logsRouter = require('./routes/logs');
-app.use('/', indexRouter);
-app.use('/users', usersRouter);
-app.use('/login', loginRouter);
-app.use('/logout', logoutRouter);
-app.use('/logs', logsRouter);
+const indexRouter = require('./routes/admin');
+const loginRouter = require('./routes/admin/login');
+const logoutRouter = require('./routes/admin/logout');
+const usersRouter = require('./routes/admin/users');
+const logsRouter = require('./routes/admin/logs');
+app.use('/admin', indexRouter);
+app.use('/admin/users', usersRouter);
+app.use('/admin/login', loginRouter);
+app.use('/admin/logout', logoutRouter);
+app.use('/admin/logs', logsRouter);
 
 
-const apiUsersRouter = require('./routes/api/users');
-const apiLogsRouter = require('./routes/api/logs');
-app.use('/api/users', apiUsersRouter);
-app.use('/api/logs', apiLogsRouter);
+const apiUsersRouter = require('./routes/admin/api/users');
+const apiLogsRouter = require('./routes/admin/api/logs');
+app.use('/admin/api/users', apiUsersRouter);
+app.use('/admin/api/logs', apiLogsRouter);
+
+
+
+const jwtAuth = require('./middlewares/jwtAuth');
+const Login = require('./routes/endusers/api/login');
+const Logout = require('./routes/endusers/api/logout');
+app.get('/login', Login);
+app.get('/logout', jwtAuth, Logout);
+
 
 // ====================== Routers =========================
 // ========================================================

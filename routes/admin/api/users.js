@@ -1,8 +1,8 @@
 const express = require('express');
 const router = express.Router();
-const adminAuth = require('../adminAuth');
-const User = require('../../config/models/User').User;
-const common = require('../../config/common');
+const adminAuth = require('../../../middlewares/adminAuth');
+const User = require('../../../models/User').User;
+const common = require('../../../config/common');
 
 /* GET all users */
 router.get('/', adminAuth, async (req, res) => {

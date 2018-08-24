@@ -1,6 +1,6 @@
 var mongoose = require('mongoose');
 
-require('./models');
+require('../models');
 
 mongoose.connect(`mongodb://${process.env.DB_HOST}/${process.env.DB_NAME}`);
 

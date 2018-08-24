@@ -181,7 +181,7 @@
 
     <script>
         var $datatableActivityLogs = $('#datatable-logs-activity').DataTable({
-            "ajax": "/api/logs/activity",
+            "ajax": "/admin/api/logs/activity",
             "deferRender": true,
             "columns": [
                 {data:"activity"},
@@ -202,7 +202,7 @@
         });
 
         var $datatableEmailLogs = $('#datatable-logs-email').DataTable({
-            "ajax": "/api/logs/email",
+            "ajax": "/admin/api/logs/email",
             "deferRender": true,
             "columns": [
                 {data:"to"},
@@ -222,7 +222,7 @@
         });
 
         var $datatableErrorLogs = $('#datatable-logs-error').DataTable({
-            "ajax": "/api/logs/error",
+            "ajax": "/admin/api/logs/error",
             "deferRender": true,
             "columns": [
                 {data:"category"},

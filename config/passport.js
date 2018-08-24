@@ -1,6 +1,6 @@
 var LocalStrategy   = require('passport-local').Strategy;
 var bcrypt = require('bcrypt');
-var User = require('./models/User').User;
+var User = require('../models/User').User;
 var common = require('./common');
 
 // expose this function to our app using module.exports

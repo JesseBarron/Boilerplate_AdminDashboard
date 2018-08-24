@@ -1,15 +1,15 @@
 const express = require('express');
 const router = express.Router();
-const adminAuth = require('./adminAuth');
-const User = require('../config/models/User').User;
-const ErrorLog = require('../config/models/ErrorLog').ErrorLog;
-const ActivityLog = require('../config/models/ActivityLog').ActivityLog;
-const common = require('../config/common');
+const adminAuth = require('../../middlewares/adminAuth');
+const User = require('../../models/User').User;
+const ErrorLog = require('../../models/ErrorLog').ErrorLog;
+const ActivityLog = require('../../models/ActivityLog').ActivityLog;
+const common = require('../../config/common');
 const moment = require('moment');
 
 /* GET home page. */
 router.get('/', adminAuth, async (req, res) => {
-
+	console.log('hitting this route');
 	try {
 		let createdDateRange = {created:{'$lte':new Date(),'$gte':moment().subtract(2,'weeks')}};
 		let promises = [
