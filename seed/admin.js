@@ -1,5 +1,5 @@
 var bcrypt = require('bcrypt');
-var User = require('../config/models/User').User;
+var User = require('../models/User').User;
 
 
 (async()=>{
