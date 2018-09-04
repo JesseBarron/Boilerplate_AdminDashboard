@@ -1,0 +1,66 @@
+<% function renderNotes(thenotes,depthLevel=0,parent=null) { %>
+    <div>
+
+        <ul data-depth="<%= depthLevel %>" class="list-unstyled" id="<%=(parent?(parent+'-children'):'')%>" style="margin-top:<%=(depthLevel > 0 ? '5px' : '0px')%>;display:<%=(depthLevel > 0 ? 'none' : 'block')%>;overflow-y:scroll;">
+            <% thenotes.forEach(function(note){ %>
+                <li class="card" id="<%=note._id%>" style="margin-top:<%=(depthLevel > 0 ? '5px' : '15px')%>;">
+                    <div class="card__header">
+                        <h5 style="display:inline-block;"><%= moment(note.created).format('LLL') %></h5>
+                        <div class="card__header-actions pull-right">
+                            <button class="btn btn-primary note-reply" data-id="<%=note._id%>"><i class="fa fa-plus"></i></button>
+                            <button class="btn btn-danger"><i class="fa fa-trash"></i></button>
+                        </div>
+                    </div>
+                    <p><%= note.note %></p>
+                    <% if(note.notes && note.notes.length){ %>
+                        <button class="btn" onclick="toggleChildren('<%=note._id%>')">
+                            <i class="fa fa-ellipsis-h" aria-hidden="true"></i>
+                        </button>
+                    <% } %>
+                    <% if(note.notes && note.notes.length) {renderNotes(note.notes,depthLevel+1,note._id);} %>
+                </li>
+            <% }) %>
+        </ul>
+
+    </div>
+
+<% } %>
+
+<% renderNotes(notes) %>
+
+<script>
+    window.addEventListener('load', function(){
+        jQuery('.note-reply').on('click', function(){
+            var id = jQuery(this).data('id');
+            jQuery('#newNoteForm').prop('action','/admin/api/notes/'+id+'/note');
+            jQuery('#new-note-modal').modal('toggle');
+        })
+    });
+    function toggleChildren(id){
+        jQuery('#'+id+'-children').toggle();
+    }
+</script>
+
+<style>
+.card {
+    /* Add shadows to create the "card" effect */
+    box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
+    transition: 0.3s;
+    padding: 5px;
+    border-width: 2px;
+    border-style: solid;
+    border-radius: 5px;
+    border-color:#AAA;
+    margin: 0px 3px 3px 3px;
+}
+.card__header {
+    border-bottom-width: 1px;
+    border-bottom-style: solid;
+    margin-bottom: 3px;
+}
+
+/* On mouse-over, add a deeper shadow */
+.card:hover {
+    box-shadow: 0 1px 16px 1px rgba(0,0,0,0.5);
+}
+</style>

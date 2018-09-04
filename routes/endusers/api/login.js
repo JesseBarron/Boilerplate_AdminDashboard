@@ -2,6 +2,7 @@ const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 const User = require('../../../models/User').User;
 const LogError = require('../../../config/common').LogError;
+const common = require('../../../config/common');
 
 module.exports = async (req, res) => {
 
@@ -29,7 +30,7 @@ module.exports = async (req, res) => {
     }
     catch (error) {
         LogError("500 /enduser/api/login",error,null,req.ip,req.device.type,req.device.name);
-        return res.json({success:false,message:"There was an problem processing that request. If this problem persists, please contact support"});
+        return res.json({success:false,message:common.errorMessages.generic500});
     }
 
 }

@@ -16,7 +16,7 @@
 
       <!-- page content -->
       <div class="right_col" role="main" style="min-height: 1704px;">
-
+        
         <!-- Super Admin Abilities START -->
         <%if(user.role == 'SuperAdmin'){%>
           <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#new-user-modal">
@@ -78,7 +78,6 @@
           </div>
         <%}%>
         <!-- Super Admin Abilities END -->
-        
         <div class="row">
           <div class="col-md-12 col-sm-12 col-xs12">
             <div class="x_panel">
@@ -103,16 +102,17 @@
               </div>
               <div class="x_content">
 
+
                   <table id="datatable-users" class="table table-striped table-bordered dataTable no-footer" role="grid">
                     <thead>
                       <tr>
-                          <th class="sorting_asc" tabindex="0" aria-controls="datatable" rowspan="1" colspan="1" aria-sort="ascending" aria-label="Name: activate to sort column descending" style="width: 100%;">ID</th>
-                          <th class="sorting_asc" tabindex="0" aria-controls="datatable" rowspan="1" colspan="1" aria-sort="ascending" aria-label="Name: activate to sort column descending" style="width: 100%;">Role</th>
-                          <th class="sorting_asc" tabindex="0" aria-controls="datatable" rowspan="1" colspan="1" aria-sort="ascending" aria-label="Name: activate to sort column descending" style="width: 100%;">Email</th>
-                          <th class="sorting_asc" tabindex="0" aria-controls="datatable" rowspan="1" colspan="1" aria-sort="ascending" aria-label="Name: activate to sort column descending" style="width: 170px;">Actions</th>
+                          <th class="sorting_asc" tabindex="0" aria-controls="datatable" rowspan="1" colspan="1" aria-sort="ascending" aria-label="Name: activate to sort column descending">ID</th>
+                          <th class="sorting_asc" tabindex="0" aria-controls="datatable" rowspan="1" colspan="1" aria-sort="ascending" aria-label="Name: activate to sort column descending">Role</th>
+                          <th class="sorting_asc" tabindex="0" aria-controls="datatable" rowspan="1" colspan="1" aria-sort="ascending" aria-label="Name: activate to sort column descending">Email</th>
                       </tr>
                     </thead>
                   </table>
+
 
               </div>
             </div>
@@ -140,92 +140,23 @@
         {data:"_id"},
         {data:"role"},
         {data:"email"},
-        {render: function(a,b,data){
-          var wrapstart = '<div style="width:100%;height:100%;text-align:center;">';
-          var del = '<button id="delete_'+data._id+'" data-id="'+data._id+'" onclick="userDelete(this)" class="btn btn-danger"><i class="fa fa-trash"></i></button>';
-          var edit = '<button id="edit_'+data._id+'" data-id="'+data._id+'" onclick="userEdit(this)" class="btn btn-primary"><i class="fa fa-edit"></i></button>';
-          var cancel = '<button id="cancel_'+data._id+'" data-id="'+data._id+'" onclick="editCancel(this)" class="btn btn-primary hidden"><i class="fa fa-close"></i></button>';
-          var save = '<button id="save_'+data._id+'" data-id="'+data._id+'" onclick="userSave(this)" class="btn btn-success hidden"><i class="fa fa-save"></i></button>';
-          var wrapend = '</div>';
-          return wrapstart+edit+cancel+save+del+wrapend;
-        }},
+        // {render: function(a,b,data){
+        //   var wrapstart = '<div style="width:100%;height:100%;text-align:center;">';
+        //   var del = '<button id="delete_'+data._id+'" data-id="'+data._id+'" onclick="userDelete(this)" class="btn btn-danger"><i class="fa fa-trash"></i></button>';
+        //   var edit = '<button id="edit_'+data._id+'" data-id="'+data._id+'" onclick="userEdit(this)" class="btn btn-primary"><i class="fa fa-edit"></i></button>';
+        //   var cancel = '<button id="cancel_'+data._id+'" data-id="'+data._id+'" onclick="editCancel(this)" class="btn btn-primary hidden"><i class="fa fa-close"></i></button>';
+        //   var save = '<button id="save_'+data._id+'" data-id="'+data._id+'" onclick="userSave(this)" class="btn btn-success hidden"><i class="fa fa-save"></i></button>';
+        //   var wrapend = '</div>';
+        //   return wrapstart+edit+cancel+save+del+wrapend;
+        // }},
       ],
       "dataSrc": 'data',
-      "scrollX": true
     });
-    function userDelete(el) {
-      var $deleteBtn = $(el),
-          id = $deleteBtn.data('id');
-      if (confirm("Are you sure that you want to delete this user?")) {
-        $.ajax({
-          url: '/admin/users/'+id,
-          method: "DELETE",
-          success: function(response){
-            if (response.success) {
-              feedbackPopup(response.message,'success');
-            }
-            else {
-              feedbackPopup(response.message,'danger');
-            }
-            $datatableUsers.ajax.reload();
-          },
-          error: function(response){
-            var message = response.statusText+':'+response.status;
-            feedbackPopup(message,'danger');
-          }
-        })
-      }
-    }
-    function userEdit(el) {
-      var $editBtn = $(el),
-          id = $editBtn.data('id');
-
-      $editBtn.addClass('hidden');
-      $('#save_'+id).removeClass('hidden');
-      $('#cancel_'+id).removeClass('hidden');
-      $('#delete_'+id).addClass('hidden');
-    }
-    function editCancel(el) {
-      var $cancelBtn = $(el),
-          id = $cancelBtn.data('id');
-      
-      if (confirm("Are you sure that you want to cancel your edits?")) {
-        $cancelBtn.addClass('hidden');
-        $('#save_'+id).addClass('hidden');
-        $('#edit_'+id).removeClass('hidden');
-        $('#delete_'+id).removeClass('hidden');
-      }
-    }
-    function userSave(el) {
-      var $saveBtn = $(el),
-          id = $saveBtn.data('id'),
-          $cancelBtn = $('#cancel_'+id),
-          $saveIcon = $saveBtn.find('i');
-
-      $cancelBtn.addClass('disabled');
-      $saveBtn.addClass('disabled');
-      $cancelBtn.attr('disabled',true);
-      $saveBtn.attr('disabled',true);
-      $saveIcon.removeClass('fa-save');
-      $saveIcon.addClass('fa-spinner fa-spin');
-      setTimeout(function(){
-        $saveIcon.removeClass('fa-spinner fa-spin');
-        $saveIcon.addClass('fa-check');
-        setTimeout(function(){
-          $saveBtn.addClass('hidden');
-          $cancelBtn.addClass('hidden');
-          $saveIcon.removeClass('fa-check');
-          $saveIcon.addClass('fa-save');
-          $cancelBtn.removeClass('disabled');
-          $saveBtn.removeClass('disabled');
-          $cancelBtn.attr('disabled',false);
-          $saveBtn.attr('disabled',false);
-          $('#edit_'+id).removeClass('hidden');
-          $('#delete_'+id).removeClass('hidden');
-        },500);
-      },1500);
-
-    }
+    $datatableUsers.on('click', 'tbody tr', function() {
+      var data = $datatableUsers.row(this).data();
+      var userPath = window.location.origin+window.location.pathname+'/'+data._id;
+      return window.location.href = userPath;
+    })
   </script>
   
 </body>

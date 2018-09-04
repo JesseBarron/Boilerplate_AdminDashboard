@@ -188,3 +188,8 @@ exports.guid = (dashes=true) => {
     let guid = b();
     return ( dashes ? guid : guid.replace(/-/g,'') );
 }
+
+
+exports.errorMessages = {
+    generic500: "There was a problem processing that request. If this issue persists, please contact support."
+};
