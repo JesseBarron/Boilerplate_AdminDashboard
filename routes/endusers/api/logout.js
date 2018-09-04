@@ -1,6 +1,7 @@
 const User = require('../../../models/User').User;
 const LogActivity = require('../../../config/common').LogActivity;
 const LogError = require('../../../config/common').LogError;
+const errorMessages = require('../../../config/common').errorMessages;
 
 module.exports = async (req, res) => {
 
@@ -15,7 +16,7 @@ module.exports = async (req, res) => {
     }
     catch (error) {
         LogError("500 Logout",error,req.user._id,req.ip,req.device.type,req.device.name);
-        return res.json({success:false,message:"There was an problem processing that request. If this problem persists, please contact support"});
+        return res.json({success:false,message:errorMessages.generic500});
     }
     
 }

@@ -9,6 +9,7 @@ var UserSchema = mongoose.Schema({
     jwt: String,
     created: Date,
     lastSeen: Date,
+    status: String,
     ips: [{
         ip: String,
         accessCount: Number

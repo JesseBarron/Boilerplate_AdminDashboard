@@ -17,7 +17,7 @@ router.get('/activity', adminAuth, async (req, res) => {
 	}
 	catch (error) {
 		common.LogError('500 API GET /logs/activity',error,req.user._id,req.ip,req.device.type,req.device.name);
-		return res.json({success:false,message:"There was a problem processing that request. If the problem persists, please contact support."});
+		return res.json({success:false,message:common.errorMessages.generic500});
 	}
 	
 });
@@ -71,7 +71,7 @@ router.post('/activity/filter', adminAuth, async (req, res) => {
 	}
 	catch (error) {
 		common.LogError('API POST /activity/filter',error,req.user._id,req.ip,req.device.type,req.device.name);
-		return res.json({success:false,message:"There was a problem processing that request. If the problem persists, please contact support."});
+		return res.json({success:false,message:common.errorMessages.generic500});
 	}
 
 });
@@ -84,7 +84,7 @@ router.get('/email', adminAuth, async (req, res) => {
 	}
 	catch (error) {
 		common.LogError('500 API GET /logs/email',error,req.user._id,req.ip,req.device.type,req.device.name);
-		return res.json({success:false,message:"There was a problem processing that request. If the problem persists, please contact support."});
+		return res.json({success:false,message:common.errorMessages.generic500});
 	}
 	
 });
@@ -97,7 +97,7 @@ router.get('/error', adminAuth, async (req, res) => {
 	}
 	catch (error) {
 		common.LogError('500 API GET /logs/error',error,req.user._id,req.ip,req.device.type,req.device.name);
-		return res.json({success:false,message:"There was a problem processing that request. If the problem persists, please contact support."});
+		return res.json({success:false,message:common.errorMessages.generic500});
 	}
 	
 });
@@ -124,7 +124,7 @@ router.get('/devices', adminAuth, async (req, res) => {
 	}
 	catch (error) {
 		common.LogError('500 API GET /logs/devices',error,req.user._id,req.ip,req.device.type,req.device.name);
-		return res.json({success:false,message:"There was a problem processing that request. If the problem persists, please contact support."});
+		return res.json({success:false,message:common.errorMessages.generic500});
 	}
 
 });
@@ -137,19 +137,32 @@ router.get('/heatmap', adminAuth, async (req, res) => {
 	try {
 		let accessActivity = await ActivityLog.find({activity:'Access',latitude:{$ne:null}});
 
-		accessActivity = accessActivity.map((a)=>{
-			return {
-				lat: a.latitude,
-				lng: a.longitude,
-				count: 1
+		const normalizeCoord = (coord) => parseFloat(coord.toFixed(4));
+		accessActivity = accessActivity.reduce((acc,curr)=>{
+			let index = acc.findIndex( e => {
+				return (
+							e.lat === normalizeCoord(curr.latitude) && 
+							e.lng === normalizeCoord(curr.longitude)
+						)
+			});
+			if (index !== -1) {
+				acc[index].count += 1;
 			}
-		});
+			else {
+				acc.push({
+					lat: normalizeCoord(curr.latitude),
+					lng: normalizeCoord(curr.longitude),
+					count: 1
+				});
+			}
+			return acc;
+		},[])
 		
-		return res.json(accessActivity);
+		return res.json({success:true,content:accessActivity});
 	}
 	catch (error) {
 		common.LogError('500 API GET /logs/heatmap',error,req.user._id,req.ip,req.device.type,req.device.name);
-		return res.json({success:false,message:"There was a problem processing that request. If the problem persists, please contact support."});
+		return res.json({success:false,message:common.errorMessages.generic500});
 	}
 	
 });

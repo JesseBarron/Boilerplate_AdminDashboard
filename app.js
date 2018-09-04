@@ -144,8 +144,10 @@ app.use('/admin/logs', logsRouter);
 
 const apiUsersRouter = require('./routes/admin/api/users');
 const apiLogsRouter = require('./routes/admin/api/logs');
+const apiNotesRouter = require('./routes/admin/api/notes');
 app.use('/admin/api/users', apiUsersRouter);
 app.use('/admin/api/logs', apiLogsRouter);
+app.use('/admin/api/notes', apiNotesRouter);
 
 
 
