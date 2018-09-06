@@ -13,9 +13,9 @@ module.exports = async (req,res,next)=>{
 	res.locals.errorMessages = req.flash('errorMessages');
 
 	//Pass location object with latitude/longitude as header from app to api as often as possible to get latest updated location record
-	let location = null;
-	if (req.headers.location) {
-		location = JSON.parse(req.headers.location)
+	let location = req.headers.location || req.body.location || req.query.location || req.params.location || null;
+	if (location && typeof location == 'string') {
+		location = JSON.parse(req.headers.location);
 	}
 
 	let userId = null,

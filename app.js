@@ -135,6 +135,7 @@ const loginRouter = require('./routes/admin/login');
 const logoutRouter = require('./routes/admin/logout');
 const usersRouter = require('./routes/admin/users');
 const logsRouter = require('./routes/admin/logs');
+app.get('/',(req,res)=>res.redirect('/admin'));
 app.use('/admin', indexRouter);
 app.use('/admin/users', usersRouter);
 app.use('/admin/login', loginRouter);
