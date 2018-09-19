@@ -98,6 +98,7 @@ app.locals.COMPANY_FA_ICON = process.env.COMPANY_FA_ICON;
 // *** uncomment in order to seed database with some test admin accounts
 // require('./seed/admin');
 // require('./seed/test');
+	// require("./seed/seed");
 // ===================== SEEDING ==========================
 // ========================================================
 
