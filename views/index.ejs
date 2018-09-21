@@ -22,47 +22,44 @@
                 <div class="col-md-3 col-sm-6 col-xs-6 tile_stats_count">
                   <span class="count_top">
                     <i class="fa fa-user"></i> Total Users</span>
-                  <div class="count"><%= totalUsers %></div>
+                  <div class="count">
+                    <%= totalUsers %>
+                  </div>
                   <br>
                 </div>
                 <div class="col-md-3 col-sm-6 col-xs-6 tile_stats_count">
                   <span class="count_top">
                     <i class="fa fa-clock-o"></i> Registers this week</span>
-                  <div class="count"><%= thisWeeksRegistrations %></div>
+                  <div class="count">
+                    <%= thisWeeksRegistrations %>
+                  </div>
                   <i class="<%= weeklyRegistrationIncreasePercent < 0 ? 'red' : 'green' %>">
-                    <i class="fa fa-sort-<%= weeklyRegistrationIncreasePercent < 0 ? 'desc' : 'asc' %>"></i><%= weeklyRegistrationIncreasePercent %>% </i> From last Week</span>
+                    <i class="fa fa-sort-<%= weeklyRegistrationIncreasePercent < 0 ? 'desc' : 'asc' %>"></i><%= weeklyRegistrationIncreasePercent %>% </i> From
+                  last Week</span>
                 </div>
                 <div class="col-md-3 col-sm-6 col-xs-6 tile_stats_count">
                   <span class="count_top">
                     <i class="fa fa-user"></i> Logins this week</span>
-                  <div class="count <%= weeklyLoginIncreasePercent < 0 ? 'red' : 'green' %>"><%= thisWeeksLogins %></div>
+                  <div class="count <%= weeklyLoginIncreasePercent < 0 ? 'red' : 'green' %>">
+                    <%= thisWeeksLogins %>
+                  </div>
                   <span class="count_bottom">
                     <i class="<%= weeklyLoginIncreasePercent < 0 ? 'red' : 'green' %>">
-                      <i class="fa fa-sort-<%= weeklyLoginIncreasePercent < 0 ? 'desc' : 'asc' %>"></i><%= weeklyLoginIncreasePercent %>% </i> From last Week</span>
+                      <i class="fa fa-sort-<%= weeklyLoginIncreasePercent < 0 ? 'desc' : 'asc' %>"></i><%= weeklyLoginIncreasePercent %>% </i> From last
+                    Week
+                  </span>
                 </div>
-                <!-- <div class="col-md-2 col-sm-4 col-xs-6 tile_stats_count">
-                  <span class="count_top">
-                    <i class="fa fa-user"></i> Total Females</span>
-                  <div class="count">4,567</div>
-                  <span class="count_bottom">
-                    <i class="red">
-                      <i class="fa fa-sort-desc"></i>12% </i> From last Week</span>
-                </div>
-                <div class="col-md-2 col-sm-4 col-xs-6 tile_stats_count">
-                  <span class="count_top">
-                    <i class="fa fa-user"></i> Total Collections</span>
-                  <div class="count">2,315</div>
-                  <span class="count_bottom">
-                    <i class="green">
-                      <i class="fa fa-sort-asc"></i>34% </i> From last Week</span>
-                </div> -->
                 <div class="col-md-3 col-sm-6 col-xs-6 tile_stats_count">
                   <span class="count_top">
                     <i class="fa fa-exclamation-circle"></i> Errors this week</span>
-                  <div class="count"><%= thisWeeksErrors %></div>
+                  <div class="count">
+                    <%= thisWeeksErrors %>
+                  </div>
                   <span class="count_bottom">
-                    <i class="<%= weeklyErrorIncreasePercent < 0 ? 'red' : 'green' %>">
-                      <i class="fa fa-sort-<%= weeklyErrorIncreasePercent < 0 ? 'desc' : 'asc' %>"></i><%= weeklyErrorIncreasePercent %>% </i> From last Week</span>
+                    <i class="<%= weeklyErrorIncreasePercent < 0 ? 'green' : 'red' %>">
+                      <i class="fa fa-sort-<%= weeklyErrorIncreasePercent < 0 ? 'desc' : 'asc' %>"></i><%= weeklyErrorIncreasePercent %>% </i> From last
+                    Week
+                  </span>
                 </div>
               </div>
               <!-- /top tiles -->
@@ -72,70 +69,93 @@
                 <div class="col-md-12 col-sm-12 col-xs-12">
                   <div class="dashboard_graph x_panel">
                     <div class="row x_title">
-                      <div class="col-md-6">
-                        <h3>Logins
+                      <div class="col-md-4 col-sm-4 col-xs-3">
+
+                        <h3>Activity</h3>
+                        <select id="activity" class="form-control" onchange="getLoginActivity()">
+                          <% for(let i = 0; i < distinctActivityTypes.length; i++) { %>
+                            <option value="<%= distinctActivityTypes[i] %>">
+                              <%= distinctActivityTypes[i] %>
+                            </option>
+                            <% } %>
+                        </select>
+
+                        <!-- <h3>Logins
                           <small>User activity through logins</small>
-                        </h3>
+                        </h3> -->
                       </div>
-                      <div class="col-md-6">
+                      <div class="col-md-8 col-sm-8 col-xs-9">
                         <div id="reportrange" class="pull-right" style="background: #fff; cursor: pointer; padding: 5px 10px; border: 1px solid #ccc">
                           <i class="glyphicon glyphicon-calendar fa fa-calendar"></i>
                           <span>July 8, 2018 - August 6, 2018</span>
                           <b class="caret"></b>
                         </div>
                       </div>
+                      <div class="col-md-8 col-sm-8 col-xs-9">
+                        <div class="pull-right">
+                          <button id="startLiveBtn" onclick="startLiveChart()" class="btn btn-success">View live</button>
+                          <button id="stopLiveBtn" onclick="stopLiveChart()" class="btn btn-danger hidden">Stop live</button>
+                        </div>
+                        <script>
+                          var liveInterval, $startLiveBtn, $stopLiveBtn, startLiveChart, stopLiveChart;
+                          window.addEventListener('load', function () {
+                            $startLiveBtn = jQuery('#startLiveBtn');
+                            $stopLiveBtn = jQuery('#stopLiveBtn');
+                            startLiveChart = function () {
+                              $startLiveBtn.addClass('hidden');
+                              $stopLiveBtn.removeClass('hidden');
+                              liveInterval = setInterval(function () {
+                                getLoginActivity();
+                              }, 1000);
+                            }
+                            stopLiveChart = function () {
+                              $stopLiveBtn.addClass('hidden');
+                              $startLiveBtn.removeClass('hidden');
+                              clearInterval(liveInterval);
+                            }
+                          });
+                          window.addEventListener('unload', function () {
+                            console.log('unloading the window!!!');
+                            clearInterval(liveInterval);
+                          });
+                        </script>
+                      </div>
                     </div>
                     <div class="x_content">
-                      <div class="demo-container" style="height:250px">
-                        <div id="chart_plot_03" class="demo-placeholder" style="padding: 0px; position: relative;">
-                          <canvas class="flot-base" width="2118" height="560" style="direction: ltr; position: absolute; left: 0px; top: 0px; width: 1059px; height: 280px;"></canvas>
-                          <div class="flot-text" style="position: absolute; top: 0px; left: 0px; bottom: 0px; right: 0px; font-size: smaller; color: rgb(84, 84, 84);">
-                            <div class="flot-x-axis flot-x1-axis xAxis x1Axis" style="position: absolute; top: 0px; left: 0px; bottom: 0px; right: 0px; display: block;">
-                              <div class="flot-tick-label tickLabel" style="position: absolute; max-width: 117px; top: 264px; left: 15px; text-align: center;">0</div>
-                              <div class="flot-tick-label tickLabel" style="position: absolute; max-width: 117px; top: 264px; left: 144px; text-align: center;">2</div>
-                              <div class="flot-tick-label tickLabel" style="position: absolute; max-width: 117px; top: 264px; left: 273px; text-align: center;">4</div>
-                              <div class="flot-tick-label tickLabel" style="position: absolute; max-width: 117px; top: 264px; left: 402px; text-align: center;">6</div>
-                              <div class="flot-tick-label tickLabel" style="position: absolute; max-width: 117px; top: 264px; left: 532px; text-align: center;">8</div>
-                              <div class="flot-tick-label tickLabel" style="position: absolute; max-width: 117px; top: 264px; left: 658px; text-align: center;">10</div>
-                              <div class="flot-tick-label tickLabel" style="position: absolute; max-width: 117px; top: 264px; left: 787px; text-align: center;">13</div>
-                              <div class="flot-tick-label tickLabel" style="position: absolute; max-width: 117px; top: 264px; left: 916px; text-align: center;">14</div>
-                              <div class="flot-tick-label tickLabel" style="position: absolute; max-width: 117px; top: 264px; left: 1045px; text-align: center;">16</div>
-                            </div>
-                            <div class="flot-y-axis flot-y1-axis yAxis y1Axis" style="position: absolute; top: 0px; left: 0px; bottom: 0px; right: 0px; display: block;">
-                              <div class="flot-tick-label tickLabel" style="position: absolute; top: 252px; left: 7px; text-align: right;">0</div>
-                              <div class="flot-tick-label tickLabel" style="position: absolute; top: 220px; left: 7px; text-align: right;">5</div>
-                              <div class="flot-tick-label tickLabel" style="position: absolute; top: 189px; left: 1px; text-align: right;">10</div>
-                              <div class="flot-tick-label tickLabel" style="position: absolute; top: 157px; left: 1px; text-align: right;">15</div>
-                              <div class="flot-tick-label tickLabel" style="position: absolute; top: 126px; left: 1px; text-align: right;">20</div>
-                              <div class="flot-tick-label tickLabel" style="position: absolute; top: 95px; left: 1px; text-align: right;">25</div>
-                              <div class="flot-tick-label tickLabel" style="position: absolute; top: 63px; left: 1px; text-align: right;">50</div>
-                              <div class="flot-tick-label tickLabel" style="position: absolute; top: 32px; left: 1px; text-align: right;">35</div>
-                              <div class="flot-tick-label tickLabel" style="position: absolute; top: 1px; left: 1px; text-align: right;">40</div>
-                            </div>
-                          </div>
-                          <canvas class="flot-overlay" width="2118" height="560" style="direction: ltr; position: absolute; left: 0px; top: 0px; width: 1059px; height: 280px;"></canvas>
-                          <div class="legend">
-                            <div style="position: absolute; width: 78px; height: 15px; top: 13px; right: 13px; background-color: rgb(255, 255, 255); opacity: 0.85;">
-                            </div>
-                            <table style="position:absolute;top:13px;right:13px;;font-size:smaller;color:#545454">
-                              <tbody>
-                                <tr>
-                                  <td class="legendColorBox">
-                                    <div style="border:1px solid #ccc;padding:1px">
-                                      <div style="width:4px;height:0;border:5px solid rgb(38,185,154);overflow:hidden"></div>
-                                    </div>
-                                  </td>
-                                  <td class="legendLabel">Logins</td>
-                                </tr>
-                              </tbody>
-                            </table>
-                          </div>
-                        </div>
+                      <div class="demo-container" style="height:280px">
+                        <div id="chat_plot_activities" class="demo-placeholder"></div>
                       </div>
                     </div>
                   </div>
                 </div>
               </div>
+
+              <div class="row">
+                <div class="col-md-12 col-sm-12 col-xs-12">
+                  <div class="x_panel">
+                    <div class="x_title">
+                      <h3>Geographical Activity</h3>
+                    </div>
+                    <div class="x_content">
+                      <div id="mapid"></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="row">
+                <div class="col-md-6 col-sm-6 col-xs-12">
+                  <div class="x_panel">
+                    <div class="x_title">
+                      <h3>Devices</h3>
+                    </div>
+                    <div class="x_content">
+                      <canvas class="canvasDoughnut" height="140" width="140" style="margin: 15px 10px 10px 0"></canvas>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
 
 
             </div>
@@ -145,11 +165,83 @@
 
     </div>
   </div>
-
   <% include ./partials/scripts %>
-  
-  <script src="/javascripts/dashboard.js"></script>
-  
+
+    <script src="/javascripts/dashboard.js"></script>
+
+    <link rel="stylesheet" href="/vendors/leaflet/leaflet.css" />
+    <script src="/vendors/leaflet/leaflet.js"></script>
+    <script src="/vendors/leaflet/heatmap.js"></script>
+    <script src="/vendors/leaflet/leaflet_heatmap.js"></script>
+    <style>
+      #mapid {
+        height: 400px;
+      }
+    </style>
+
+    <script>
+
+      var baseLayer = L.tileLayer(
+        'http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+          attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
+          maxZoom: 18
+        }
+      );
+
+      var cfg = {
+        // radius should be small ONLY if scaleRadius is true (or small radius is intended)
+        // if scaleRadius is false it will be the constant radius used in pixels
+        "radius": .8,
+        "maxOpacity": .8,
+        // scales the radius based on map zoom
+        "scaleRadius": true,
+        // if set to false the heatmap uses the global maximum for colorization
+        // if activated: uses the data maximum within the current map boundaries 
+        //   (there will always be a red spot with useLocalExtremas true)
+        "useLocalExtrema": true,
+        // which field name in your data represents the latitude - default "lat"
+        latField: 'lat',
+        // which field name in your data represents the longitude - default "lng"
+        lngField: 'lng',
+        // which field name in your data represents the data value - default "value"
+        valueField: 'count'
+      };
+
+
+      var heatmapLayer = new HeatmapOverlay(cfg);
+
+      var map = new L.Map('mapid', {
+        center: new L.LatLng(37.8781, -98.6298),
+        zoom: 4,
+        layers: [baseLayer, heatmapLayer]
+      });
+
+      getHeatMapData();
+      function getHeatMapData(){
+        // navigator.geolocation.getCurrentPosition(function(position){
+        //   $.ajaxSetup({
+        //     headers:{
+        //       'location':JSON.stringify({latitude:position.coords.latitude,longitude:position.coords.longitude})
+        //     }
+        //   });
+        // })
+        $.get('/admin/api/logs/heatmap', function(data,status){
+          if (data.success) {
+            var heatMapData = {
+              max: 8,
+              data: data.content
+            };
+            heatmapLayer.setData(heatMapData);
+          }
+          else {
+            
+          }
+        });
+      }
+      
+    </script>
+
+
 </body>
 
 </html>

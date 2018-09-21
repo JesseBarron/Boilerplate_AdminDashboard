@@ -1,53 +1,55 @@
-var express = require('express');
-var router = express.Router();
-var adminAuth = require('./adminAuth');
-var User = require('../config/models/User').User;
-var ErrorLog = require('../config/models/ErrorLog').ErrorLog;
-var ActivityLog = require('../config/models/ActivityLog').ActivityLog;
-var common = require('../config/common');
-var moment = require('moment');
+const express = require('express');
+const router = express.Router();
+const adminAuth = require('../../middlewares/adminAuth');
+const User = require('../../models/User').User;
+const ErrorLog = require('../../models/ErrorLog').ErrorLog;
+const ActivityLog = require('../../models/ActivityLog').ActivityLog;
+const common = require('../../config/common');
+const moment = require('moment');
 
 /* GET home page. */
 router.get('/', adminAuth, async (req, res) => {
-
+	console.log('hitting this route');
 	try {
 		let createdDateRange = {created:{'$lte':new Date(),'$gte':moment().subtract(2,'weeks')}};
 		let promises = [
 			User.find(),
 			ErrorLog.find(createdDateRange),
-			ActivityLog.find(createdDateRange)
+			ActivityLog.find(createdDateRange),
+			ActivityLog.distinct("activity")
 		]
-		let [allUsers, allErrors, allActivities] = await Promise.all(promises);
-	
+		let [allUsers, allErrors, allActivities, distinctActivityTypes] = await Promise.all(promises);
+
 		let [thisWeeksRegistrations, weeklyRegistrationIncreasePercent] = weekTotalAndPercentIncrease(allUsers);
-	
+
 		let [thisWeeksErrors, weeklyErrorIncreasePercent] = weekTotalAndPercentIncrease(allErrors);
-	
+
 		let allLogins = allActivities.filter( a => a.activity == 'Login' );
 		let [thisWeeksLogins, weeklyLoginIncreasePercent] = weekTotalAndPercentIncrease(allLogins);
+
+		distinctActivityTypes = distinctActivityTypes.sort( (a,b) => a > b );
 		
 		return res.render(
 			'index',
 			{
 				menu: 'dashboard',
 				title: 'Dashboard',
-				successMessages: req.flash('successMessages'),
-				errorMessages: req.flash('errorMessages'),
 				totalUsers: allUsers.length,
 				thisWeeksRegistrations,
 				weeklyRegistrationIncreasePercent,
 				thisWeeksErrors,
 				weeklyErrorIncreasePercent,
 				thisWeeksLogins,
-				weeklyLoginIncreasePercent
+				weeklyLoginIncreasePercent,
+				distinctActivityTypes
 			}
 		);
 	}
 	catch (error) {
-		common.LogError("500 GET /", error, req.user._id, req.ip);
+		common.LogError("500 GET /", error, req.user._id, req.ip,req.device.type,req.device.name);
 		return res.render('error500');
 	}
-	
+
 });
 
 /**
@@ -57,7 +59,7 @@ router.get('/', adminAuth, async (req, res) => {
  */
 function percentIncrease(newNumber, originalNumber){
 	let increase = newNumber - originalNumber;
-	return ((increase+originalNumber)*100);
+	return ((increase/originalNumber)*100).toFixed(2);
 }
 
 /**

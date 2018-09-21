@@ -1,6 +1,6 @@
 var LocalStrategy   = require('passport-local').Strategy;
 var bcrypt = require('bcrypt');
-var User = require('./models/User').User;
+var User = require('../models/User').User;
 var common = require('./common');
 
 // expose this function to our app using module.exports
@@ -87,13 +87,13 @@ module.exports = function(passport) {
                 return done(null, false);
             }
 
-            await common.LogActivity("Login","User has successfully logged in.",foundUser._id,req.ip);
+            await common.LogActivity("Login","User has successfully logged in.",foundUser._id,req.ip,req.device.type,req.device.name);
 
             req.flash('successMessages', 'Successfully logged in!');
             return done(null, foundUser);
         }
         catch (error) {
-            await common.LogError("Login",error,null,req.ip);
+            await common.LogError("Login",error,null,req.ip,req.device.type,req.device.name);
             return done(error);
         }
 

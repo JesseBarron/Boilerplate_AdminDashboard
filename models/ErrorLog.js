@@ -3,6 +3,8 @@ var mongoose = require("mongoose");
 var ErrorLogSchema = mongoose.Schema({
 
     created: Date,
+    deviceType: String,
+    deviceName: String,
     category: String,
     error: String,
     ip: String,

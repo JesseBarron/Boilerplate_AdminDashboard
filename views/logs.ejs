@@ -17,7 +17,7 @@
                 <div class="right_col" role="main" style="min-height: 1704px;">
 
                     <div class="row">
-                        <div class="col-md-12 col-sm-12 col-xs12">
+                        <div class="col-md-12 col-sm-12 col-xs-12">
                             <div class="x_panel">
                                 <div class="x_title">
                                     <h2 class="alert alert-success">Activity Logs</h2>
@@ -50,15 +50,15 @@
                                     <table id="datatable-logs-activity" class="table table-striped table-bordered dataTable no-footer" role="grid">
                                         <thead>
                                             <tr>
-                                                <th class="sorting_asc" tabindex="0" aria-controls="datatable" rowspan="1" colspan="1" aria-sort="ascending" aria-label="Name: activate to sort column descending"
-                                                    style="width: 100%;">Activity</th>
+                                                <th class="sorting" tabindex="0" aria-controls="datatable" rowspan="1" colspan="1" aria-sort="ascending" aria-label="Name: activate to sort column descending"
+                                                    style="width: auto;">Activity</th>
                                                 <th class="sorting" tabindex="1" aria-controls="datatable" rowspan="1" colspan="1" aria-sort="ascending" aria-label="Name: activate to sort column descending"
                                                     style="width: 100%;">Content</th>
                                                 <th class="sorting" tabindex="2" aria-controls="datatable" rowspan="1" colspan="1" aria-sort="ascending" aria-label="Name: activate to sort column descending"
                                                     style="width: 100%;">User</th>
                                                 <th class="sorting" tabindex="3" aria-controls="datatable" rowspan="1" colspan="1" aria-sort="ascending" aria-label="Name: activate to sort column descending"
                                                     style="width: 100%;">IP</th>
-                                                <th class="sorting" tabindex="4" aria-controls="datatable" rowspan="1" colspan="1" aria-sort="ascending" aria-label="Name: activate to sort column descending"
+                                                <th class="sorting_asc" tabindex="4" aria-controls="datatable" rowspan="1" colspan="1" aria-sort="ascending" aria-label="Name: activate to sort column descending"
                                                     style="width: 100%;">Date</th>
                                             </tr>
                                         </thead>
@@ -68,7 +68,7 @@
                             </div>
                         </div>
 
-                        <div class="col-md-12 col-sm-12 col-xs12">
+                        <div class="col-md-12 col-sm-12 col-xs-12">
                             <div class="x_panel">
                                 <div class="x_title">
                                     <h2 class="alert alert-warning">Email Logs</h2>
@@ -101,13 +101,13 @@
                                     <table id="datatable-logs-email" class="table table-striped table-bordered dataTable no-footer" role="grid">
                                         <thead>
                                             <tr>
-                                                <th class="sorting_asc" tabindex="0" aria-controls="datatable" rowspan="1" colspan="1" aria-sort="ascending" aria-label="Name: activate to sort column descending"
+                                                <th class="sorting" tabindex="0" aria-controls="datatable" rowspan="1" colspan="1" aria-sort="ascending" aria-label="Name: activate to sort column descending"
                                                     style="width: 10%;">To</th>
                                                 <th class="sorting" tabindex="1" aria-controls="datatable" rowspan="1" colspan="1" aria-sort="ascending" aria-label="Name: activate to sort column descending"
                                                     style="width: 40%;">Subject</th>
                                                 <th class="sorting" tabindex="2" aria-controls="datatable" rowspan="1" colspan="1" aria-sort="ascending" aria-label="Name: activate to sort column descending"
                                                     style="width: 40%;">Content</th>
-                                                <th class="sorting" tabindex="4" aria-controls="datatable" rowspan="1" colspan="1" aria-sort="ascending" aria-label="Name: activate to sort column descending"
+                                                <th class="sorting_asc" tabindex="4" aria-controls="datatable" rowspan="1" colspan="1" aria-sort="ascending" aria-label="Name: activate to sort column descending"
                                                     style="width: 10%;">Date</th>
                                             </tr>
                                         </thead>
@@ -117,7 +117,7 @@
                             </div>
                         </div>
 
-                        <div class="col-md-12 col-sm-12 col-xs12">
+                        <div class="col-md-12 col-sm-12 col-xs-12">
                             <div class="x_panel">
                                 <div class="x_title">
                                     <h2 class="alert alert-danger">Error Logs</h2>
@@ -150,7 +150,7 @@
                                     <table id="datatable-logs-error" class="table table-striped table-bordered dataTable no-footer" role="grid">
                                         <thead>
                                             <tr>
-                                                <th class="sorting_asc" tabindex="0" aria-controls="datatable" rowspan="1" colspan="1" aria-sort="ascending" aria-label="Name: activate to sort column descending"
+                                                <th class="sorting" tabindex="0" aria-controls="datatable" rowspan="1" colspan="1" aria-sort="ascending" aria-label="Name: activate to sort column descending"
                                                     style="width: auto;">Category</th>
                                                 <th class="sorting" tabindex="1" aria-controls="datatable" rowspan="1" colspan="1" aria-sort="ascending" aria-label="Name: activate to sort column descending"
                                                     style="width: 100%;">Error</th>
@@ -158,7 +158,7 @@
                                                     style="width: auto;">User</th>
                                                 <th class="sorting" tabindex="3" aria-controls="datatable" rowspan="1" colspan="1" aria-sort="ascending" aria-label="Name: activate to sort column descending"
                                                     style="width: auto;">IP</th>
-                                                <th class="sorting" tabindex="4" aria-controls="datatable" rowspan="1" colspan="1" aria-sort="ascending" aria-label="Name: activate to sort column descending"
+                                                <th class="sorting_asc" tabindex="4" aria-controls="datatable" rowspan="1" colspan="1" aria-sort="ascending" aria-label="Name: activate to sort column descending"
                                                     style="width: auto;">Date</th>
                                             </tr>
                                         </thead>
@@ -181,60 +181,63 @@
 
     <script>
         var $datatableActivityLogs = $('#datatable-logs-activity').DataTable({
-            "ajax": "/api/logs/activity",
+            "ajax": "/admin/api/logs/activity",
             "deferRender": true,
             "columns": [
                 {data:"activity"},
                 {data:"content"},
                 {data:"user"},
                 {data:"ip"},
-                {data:"created"}
-                // {
-                //     data:"date",
-                //     render: function(date,x,row) {
-                //         return moment(date).format('LLL');
-                //     }
-                // }
+                // {data:"created"}
+                {
+                    data:"created",
+                    render: function(date,x,row) {
+                        return moment(date).format('LLL');
+                    }
+                }
             ],
+            "order": [[4,"desc"]],
             "dataSrc": 'data',
             "scrollX": true
         });
 
         var $datatableEmailLogs = $('#datatable-logs-email').DataTable({
-            "ajax": "/api/logs/email",
+            "ajax": "/admin/api/logs/email",
             "deferRender": true,
             "columns": [
                 {data:"to"},
                 {data:"subject"},
                 {data:"content"},
-                {data:"created"}
-                // {
-                //     data:"date",
-                //     render: function(date,x,row) {
-                //         return moment(date).format('LLL');
-                //     }
-                // }
+                // {data:"created"}
+                {
+                    data:"created",
+                    render: function(date,x,row) {
+                        return moment(date).format('LLL');
+                    }
+                }
             ],
+            "order": [[3,"desc"]],
             "dataSrc": 'data',
             "scrollX": true
         });
 
         var $datatableErrorLogs = $('#datatable-logs-error').DataTable({
-            "ajax": "/api/logs/error",
+            "ajax": "/admin/api/logs/error",
             "deferRender": true,
             "columns": [
                 {data:"category"},
                 {data:"error"},
                 {data:"user"},
                 {data:"ip"},
-                {data:"created"}
-                // {
-                //     data:"date",
-                //     render: function(date,x,row) {
-                //         return moment(date).format('LLL');
-                //     }
-                // }
+                // {data:"created"}
+                {
+                    data:"created",
+                    render: function(date,x,row) {
+                        return moment(date).format('LLL');
+                    }
+                }
             ],
+            "order": [[4,"desc"]],
             "dataSrc": 'data',
             "scrollX": true
         });
