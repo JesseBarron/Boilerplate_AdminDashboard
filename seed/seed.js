@@ -1,4 +1,5 @@
 require('dotenv').config();
+const bcrypt = require("bcrypt");
 const { db } = require("../config/mongo");
 const { User } = require("../models/User");
 const { Address } = require("../models/Address");
@@ -14,7 +15,7 @@ const generateUsers = async (num) => {
       firstName: "Jesse",
       lastName: 'B',
       email: "jb@jb.com",
-      password: 123,
+      password: await bcrypt.hash('123', 12),
       role: "SuperAdmin"
     }
   ]
@@ -23,7 +24,7 @@ const generateUsers = async (num) => {
       firstName: faker.name.firstName(),
       lastName: faker.name.lastName(),
       email: faker.internet.email(),
-      password: 123,
+      password: await bcrypt.hash('123', 12),
       role: "User"
     }
     fakeUsers.push(tempUser);

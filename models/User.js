@@ -23,7 +23,10 @@ var UserSchema = mongoose.Schema({
     role: String,
     created: Date,
     lastSeen: Date,
-    status: String,
+    status: {
+        type: String,
+        default: "Active"
+    },
     ips: [{
         ip: String,
         accessCount: Number

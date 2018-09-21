@@ -24,10 +24,12 @@ const AddressSchema = mongoose.Schema({
         type: String,
         minlength: 2,
         maxlength: 3,
+        required: true
     },
     postal: {
         type: String,
-        validate: postalValidator
+        validate: postalValidator,
+        required: true
     }
 });
 

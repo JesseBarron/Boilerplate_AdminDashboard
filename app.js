@@ -98,7 +98,6 @@ app.locals.COMPANY_FA_ICON = process.env.COMPANY_FA_ICON;
 // *** uncomment in order to seed database with some test admin accounts
 // require('./seed/admin');
 // require('./seed/test');
-	// require("./seed/seed");
 // ===================== SEEDING ==========================
 // ========================================================
 
@@ -147,15 +146,18 @@ app.use('/admin/logs', logsRouter);
 const apiUsersRouter = require('./routes/admin/api/users');
 const apiLogsRouter = require('./routes/admin/api/logs');
 const apiNotesRouter = require('./routes/admin/api/notes');
+const apiCouponRouter = require('./routes/admin/api/coupon');
 app.use('/admin/api/users', apiUsersRouter);
 app.use('/admin/api/logs', apiLogsRouter);
 app.use('/admin/api/notes', apiNotesRouter);
-
+app.use('/admin/api/coupon', apiCouponRouter);
 
 
 const jwtAuth = require('./middlewares/jwtAuth');
 const Login = require('./routes/endusers/api/login');
 const Logout = require('./routes/endusers/api/logout');
+
+app.use("/enduser/api", require("./routes/endusers/api"));
 app.get('/login', Login);
 app.get('/logout', jwtAuth, Logout);
 
