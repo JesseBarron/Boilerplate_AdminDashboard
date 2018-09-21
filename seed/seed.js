@@ -117,6 +117,15 @@ const updateUserCoupons = async (coupons) => {
 
 const seed = async () => {
   try {
+    let dots = "."
+    setInterval(() => {
+      const message = "Hold Up"
+      if(dots.length > 20) {
+        dots = "."
+      }
+      console.log(message + dots)
+      dots += "."
+    }, 1000)
     await db.dropDatabase();
     await generateUsers(20);
     await generateAddresses(20);
